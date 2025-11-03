@@ -40,11 +40,13 @@
   "submit": {
     "production": {
       "ios": {
+        "_comment": "Replace these values with your actual Apple credentials before submission",
         "appleId": "your-apple-id@example.com",
         "ascAppId": "your-app-store-connect-app-id",
         "appleTeamId": "your-apple-team-id"
       },
       "android": {
+        "_comment": "Create a service account in Google Play Console and download the JSON key file. Update the path below.",
         "serviceAccountKeyPath": "./path/to/api-key.json",
         "track": "internal"
       }
