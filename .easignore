@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+
+# Testing
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Documentation
+*.md
+docs/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# CI/CD
+.github/
+
+# Temporary files
+*.log
+*.tmp
+.DS_Store
+
+# Local environment files
+.env*.local
