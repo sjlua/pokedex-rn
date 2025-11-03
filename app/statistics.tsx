@@ -26,6 +26,27 @@ interface PokemonAbilityObject {
   }
 }
 
+const bgColourByType: Record<string, string> = {
+  normal: "#A8A77A",
+  fire: "#F5AC78",
+  water: "#7BC0FF",
+  electric: "#F7D66B",
+  grass: "#9AEF89",
+  ice: "#BEEAF4",
+  fighting: "#E68A7A",
+  poison: "#CDA0E0",
+  ground: "#E4C77E",
+  flying: "#C6B6FF",
+  psychic: "#FF8FA3",
+  bug: "#C9E078",
+  rock: "#D2C17A",
+  ghost: "#C7B8E6",
+  dragon: "#A78BFF",
+  dark: "#BFA88F",
+  steel: "#D6D6E0",
+  fairy: "#F4B6D9"
+}
+
 {/* make sure to import from react-native! */}
 export default function Statistics() {
   const params = useLocalSearchParams<{ name: string }>()
@@ -52,7 +73,7 @@ export default function Statistics() {
         imageFrontLink: jsonData.sprites.front_default,
         imageBackLink: jsonData.sprites.back_default,
         imageFrontShinyLink: jsonData.sprites.front_shiny,
-        types: jsonData.types, // already matches your PokemonTypeObject[]
+        types: jsonData.types, // already matches PokemonTypeObject[]
         abilities: jsonData.abilities
       }
 
@@ -66,10 +87,12 @@ export default function Statistics() {
   return (
     // replaces standard unscrollable view with scrollable
     <ScrollView
-    contentContainerStyle={{
+    contentContainerStyle={[{
       gap: 20,
-      padding: 20
-    }}>
+      padding: 20,
+    },
+    pokemon ? {backgroundColor: bgColourByType[pokemon.types[0].type.name] + 70} : {}
+    ]}>
       {/* null guard against unloaded stats */}
       {!pokemon ? (
         <Text>{"Loading data..."}</Text>
