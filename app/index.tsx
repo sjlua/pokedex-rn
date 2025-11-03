@@ -1,8 +1,12 @@
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native";
 
 // Base version from Code with Beto: https://youtu.be/BUXnASp_WyQ
+
+interface PageManager {
+  currentPage: number;
+}
 
 interface Pokemon {
   name: string;
@@ -43,6 +47,9 @@ export default function Index() {
   // a list of Pokemon objects and the setter?
   const [listPokemon, setPokemonData] = useState<Pokemon[]>([]);
 
+  // tracks pagination
+  const [currentPage, setCurrentPage] = useState<number>(1)
+
   // useEffect first param runs it on first boot
   useEffect(() => {
     // fetch list of pokemon
@@ -52,7 +59,7 @@ export default function Index() {
   async function fetchPokemon() {
     try {
       // fetch takes URL and receives a response
-      const unformattedResponse = await fetch("https://pokeapi.co/api/v2/pokemon/?limit=15");
+      const unformattedResponse = await fetch(`https://pokeapi.co/api/v2/pokemon/?limit=${currentPage}`);
 
       // format to json
       const jsonData = await unformattedResponse.json();
@@ -97,7 +104,7 @@ export default function Index() {
         <Link
         key={pokemon.name}
         href={{ pathname: "/statistics", params: {name: pokemon.name}}}
-        style={[styles.pokemonCard, 
+        style={[styles.cardLayout, 
             {
             // + 70 makes the opacity 70%
             // ignore type warning
@@ -105,7 +112,7 @@ export default function Index() {
             backgroundColor: bgColourByType[pokemon.types[0].type.name] + 70,
           }]}>
            {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
-          <View>
+          <View style={styles.cardContent}>
             <Text key={pokemon.name} style={styles.name}>
               {pokemon.name.toUpperCase()}
             </Text>
@@ -114,9 +121,8 @@ export default function Index() {
               <Text key={pokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
             ))}
 
-            <View style={{
-              flexDirection: "row"
-            }}>
+            <View style={styles.imagesRow
+            }>
               <Image
               source={{uri: pokemon.imageFrontLink}}
               style={{ width: 150, height: 150 }} />
@@ -126,27 +132,54 @@ export default function Index() {
             </View>
           </View>
         </Link>
-      ))}
+      ))
+      }
+      <View style={styles.imagesRow}>
+        <Button 
+        title="<-- Less"
+        onPress={() => {
+          const updatePage: number = currentPage > 11 ? currentPage - 10 : currentPage
+          setCurrentPage(updatePage)
+          fetchPokemon()
+        }}/>
+        <Button 
+        title="More -->"
+        onPress={() => {
+          const updatePage: number = currentPage + 10
+          setCurrentPage(updatePage)
+          fetchPokemon()
+        }}/>
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  pokemonCard: {
+  cardLayout: {
     padding: 20,
     borderRadius: 20,
   },
 
+  cardContent: {
+    width: "100%", // needed to allow centring to take up full width and actually be centred
+    alignItems: "center", // center content horizontally and vertically inside each card
+  },
+
   name: {
     fontSize: 28,
-    fontWeight: 'bold',
-    // padding: 20
+    fontWeight: 'bold'
   },
 
   type: {
     fontSize: 20,
     fontStyle: 'italic',
     color: 'grey',
-    // paddingStart: 20
-  }
+  },
+
+  imagesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
+  },
 })
