@@ -36,6 +36,58 @@ To learn more about developing your project with Expo, look at the following res
 - [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
 - [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
 
+## Building and Packaging
+
+This project uses [EAS (Expo Application Services)](https://docs.expo.dev/build/introduction/) for building native binaries.
+
+### Prerequisites
+- Install EAS CLI globally: `npm install -g eas-cli`
+- Log in to your Expo account: `eas login`
+
+### Build Profiles
+
+Three build profiles are available:
+
+1. **Development** - For testing with development builds
+   ```bash
+   npm run build:development
+   ```
+
+2. **Preview** - For internal testing and QA
+   ```bash
+   npm run build:preview
+   ```
+
+3. **Production** - For app store releases
+   ```bash
+   npm run build:production
+   ```
+
+You can also build for specific platforms:
+- iOS only: `npm run build:preview:ios`
+- Android only: `npm run build:preview:android`
+
+### Submitting to App Stores
+
+To submit a production build to the app stores:
+```bash
+npm run submit:production
+```
+
+Before submitting, update the credentials in `eas.json` under the `submit.production` section.
+
+### CI/CD
+
+GitHub Actions workflows are configured for automated builds:
+- **Build Workflow** - Manually triggered from the Actions tab to build the app
+- **PR Checks** - Automatically runs linting and type checking on pull requests
+
+To use the Build workflow, add your Expo access token as a repository secret named `EXPO_TOKEN`.
+
+### Version Management
+
+The app version is configured in `app.json`. When building for production, EAS will automatically increment the build number.
+
 ## Join the community
 
 Join our community of developers creating universal apps.
