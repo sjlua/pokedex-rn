@@ -1,9 +1,13 @@
-# Welcome to your Expo app 👋
+# Pokédex
+This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app), with React Native. I made this app to learn how React Native and Expo work.
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+All Pokémon names and references used belong to Nintendo and The Pokémon Company Inc. I do not claim ownership over any IP related to Pokémon.
+
+## Credits
+This app was based on [Code with Beto](https://youtu.be/BUXnASp_WyQ)'s tutorial.
 
 ## Get started
-
+The following are the (mostly) standard instructions for an Expo project.
 1. Install dependencies
 
    ```bash
@@ -24,16 +28,6 @@ In the output, you'll find options to open the app in a
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
 You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
-```
-
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
 
 ## Learn more
 
