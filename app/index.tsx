@@ -4,10 +4,6 @@ import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native"
 
 // Base version from Code with Beto: https://youtu.be/BUXnASp_WyQ
 
-interface PageManager {
-  currentPage: number;
-}
-
 interface Pokemon {
   name: string;
   imageFrontLink: string;
@@ -47,14 +43,16 @@ export default function Index() {
   // a list of Pokemon objects and the setter?
   const [listPokemon, setPokemonData] = useState<Pokemon[]>([]);
 
-  // tracks pagination
+  // tracks the number of items on screen from 0-currentPage.
   const [currentPage, setCurrentPage] = useState<number>(1)
 
   // useEffect first param runs it on first boot
   useEffect(() => {
-    // fetch list of pokemon
+    // Fetch Pokemon, create UI
+    // The list that currentPage is in, ensures that useEffect is called 
+    // whenever changes are made to whatever state variables are in the Depedency List
   fetchPokemon()
-  }, [])
+  }, [currentPage])
 
   async function fetchPokemon() {
     try {
@@ -86,7 +84,7 @@ export default function Index() {
 
       // update listPokemon data based on the results from further fetch
       setPokemonData(getPokemonStats)
-      console.log(JSON.stringify(getPokemonStats[0], null, 2))
+      // console.log(JSON.stringify(getPokemonStats[0], null, 2))
 
       // if fail, print err to console
     } catch(e) {
@@ -113,16 +111,21 @@ export default function Index() {
           }]}>
            {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
           <View style={styles.cardContent}>
+
+            {/* Name */}
             <Text key={pokemon.name} style={styles.name}>
               {pokemon.name.toUpperCase()}
             </Text>
 
-            {pokemon.types.map((type) => (
+            {/* Types */}
+            <View style={styles.typesRow}>
+              {pokemon.types.map((type) => (
               <Text key={pokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
             ))}
+            </View>
 
-            <View style={styles.imagesRow
-            }>
+            {/* Sprites */}
+            <View style={styles.imagesRow}>
               <Image
               source={{uri: pokemon.imageFrontLink}}
               style={{ width: 150, height: 150 }} />
@@ -134,20 +137,20 @@ export default function Index() {
         </Link>
       ))
       }
-      <View style={styles.imagesRow}>
-        <Button 
-        title="<-- Less"
+      <View style={styles.buttonRow}>
+        {/* Don't allow the user to request for less pokemon than 10, since 10 is the page increment */}
+        {currentPage < 10 ? null : <Button 
+        title="Less"
         onPress={() => {
           const updatePage: number = currentPage > 11 ? currentPage - 10 : currentPage
+          // Update current page number
           setCurrentPage(updatePage)
-          fetchPokemon()
-        }}/>
+        }}/>}
         <Button 
-        title="More -->"
+        title="More"
         onPress={() => {
           const updatePage: number = currentPage + 10
           setCurrentPage(updatePage)
-          fetchPokemon()
         }}/>
       </View>
     </ScrollView>
@@ -176,10 +179,20 @@ const styles = StyleSheet.create({
     color: 'grey',
   },
 
+  typesRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10
+  },
+
   imagesRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 8,
   },
+
+  buttonRow: {
+    flexDirection: "row",
+    justifyContent: "space-between"
+  }
 })
