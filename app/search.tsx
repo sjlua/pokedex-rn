@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
 
 interface Pokemon {
   pokedex: number;
@@ -12,6 +12,7 @@ interface Pokemon {
 export default function Search() {
     const [query, setQuery] = useState<string>(""); // user input field
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
+    const [pokemonName, setPokemonName] = useState<string | null>(null);
 
     useEffect(() => { searchPokemon() }, [selectedName])
 
@@ -23,15 +24,17 @@ export default function Search() {
                 // format to json
                 const jsonData = await unformattedResponse.json();
 
-                const mapToFavourite: Pokemon = {
-                    pokedex: jsonData.id,
-                    name: jsonData.name,
-                    imageFrontLink: jsonData.sprites.front_default,
-                    imageFrontShinyLink: jsonData.sprites.front_shiny,
+                // handle non-2xx responses before attempting to parse JSON
+                if (!unformattedResponse.ok) {
+                const bodyText = await unformattedResponse.text();
+                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toLocaleUpperCase()}.`
+                // show error message to user
+                Platform.OS === 'android' ? ToastAndroid.show(errString, ToastAndroid.SHORT) : Alert.alert('Error', errString)
+                // show error in console
+                throw new Error(bodyText || `Request failed with status ${unformattedResponse.status}`);
                 }
 
-                // update favourite pokemon stats
-                // setFavouriteMon(mapToFavourite)
+                setPokemonName(jsonData.name)
             }
         }
         catch (e) {
@@ -40,7 +43,8 @@ export default function Search() {
     }
 
     return (
-        <ScrollView 
+        !pokemonName ?
+        (<ScrollView 
         contentContainerStyle={{ gap: 10, padding: 20 }}>
             <View style={styles.container}>
                 <Text style={styles.question}>"Search for a Pokémon"</Text>
@@ -59,7 +63,8 @@ export default function Search() {
                         setQuery("")
                     }}/>
             </View>
-        </ScrollView>
+        </ScrollView>) :
+        (<Text>{pokemonName.toLocaleUpperCase()}</Text>)
     )
 }
 

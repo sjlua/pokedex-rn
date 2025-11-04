@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Button, Image, ScrollView, StyleSheet, Text, TextInput, View } from "react-native";
+import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, ToastAndroid, View } from "react-native";
 
 interface Pokemon {
   pokedex: number;
@@ -12,6 +12,7 @@ export default function Profile() {
     const [query, setQuery] = useState<string>(""); // user input field
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
     const [favouriteMon, setFavouriteMon] = useState<Pokemon | null>(null)
+    const [boolShowShiny, setShowStatus] = useState<boolean>(false); // show shiny toggle
 
     useEffect(() => { getFavouritePokemonStats() }, [selectedName])
 
@@ -20,6 +21,17 @@ export default function Profile() {
             if (selectedName) {
                 // fetch takes URL and receives a response
                 const unformattedResponse = await fetch("https://pokeapi.co/api/v2/pokemon/" + selectedName);
+
+                // handle non-2xx responses before attempting to parse JSON
+                if (!unformattedResponse.ok) {
+                const bodyText = await unformattedResponse.text();
+                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toLocaleUpperCase()}.`
+                // show error message to user
+                Platform.OS === 'android' ? ToastAndroid.show(errString, ToastAndroid.SHORT) : Alert.alert('Error', errString)
+                // show error in console
+                throw new Error(bodyText || `Request failed with status ${unformattedResponse.status}`);
+                }
+
                 // format to json
                 const jsonData = await unformattedResponse.json();
 
@@ -41,7 +53,7 @@ export default function Profile() {
 
     return (
         <ScrollView 
-        contentContainerStyle={{ gap: 20, padding: 20 }}>
+        contentContainerStyle={{ gap: 10, padding: 20 }}>
             { !favouriteMon ? (
                 <View style={styles.container}>
                     <Text style={styles.question}>What's your favourite Pokémon?</Text>
@@ -64,7 +76,17 @@ export default function Profile() {
                 <ScrollView key={favouriteMon.name} contentContainerStyle={{ gap: 20, padding: 10 }}>
                     <View style={styles.container}>
                         <Text style={styles.name}>{favouriteMon.name.toUpperCase()}</Text>
-                        <Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />
+                        <View style={styles.row}>
+                            <Text>Show shiny</Text>
+                        <Switch
+                            value={boolShowShiny}
+                            onValueChange={(next: boolean) => setShowStatus(next)}
+                            accessibilityLabel="Show shiny"/>
+                        </View>
+                        
+                        {boolShowShiny ? 
+                        (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
+                        : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
                     </View>
 
                     <View style={styles.container}>
@@ -95,6 +117,13 @@ const styles = StyleSheet.create({
         alignItems: "center", 
         width: "100%",
         gap: 8
+    },
+
+    row: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        width: "100%"
     },
 
     question: {
