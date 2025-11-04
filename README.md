@@ -1,4 +1,4 @@
-# Pokédex
+# Pokédex RN
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app), with React Native. I made this app to learn how React Native and Expo work.
 
 All Pokémon names and references used belong to Nintendo and The Pokémon Company Inc. I do not claim ownership over any IP related to Pokémon.
