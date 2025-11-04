@@ -45,9 +45,9 @@ export default function Search() {
     return (
         !pokemonName ?
         (<ScrollView 
-        contentContainerStyle={{ gap: 10, padding: 20 }}>
+        contentContainerStyle={{ gap: 10, padding: 10 }}>
             <View style={styles.container}>
-                <Text style={styles.question}>"Search for a Pokémon"</Text>
+                <Text style={styles.question}>{"Search for a Pokémon"}</Text>
                 <TextInput 
                     placeholder="Name or national pokedex number (e.g. pikachu or 25)"
                     value={query}
@@ -64,7 +64,26 @@ export default function Search() {
                     }}/>
             </View>
         </ScrollView>) :
-        (<Text>{pokemonName.toLocaleUpperCase()}</Text>)
+        (<ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
+            <View style={styles.container}>
+            <Text style={styles.question}>{pokemonName.toLocaleUpperCase()}</Text>
+            <Text style={styles.question}>{"Search for a new Pokémon?"}</Text>
+            <TextInput 
+                placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                value={query}
+                onChangeText={setQuery}
+                autoCapitalize="none"/>
+            <Button                    
+                key={"enter"} 
+                title="Enter"
+                accessibilityLabel="Search for a Pokémon." 
+                onPress={() => {
+                    if (!query.trim()) return;
+                    setSelectedName(query.trim());
+                    setQuery("")
+                }}/>
+            </View>    
+        </ScrollView>)
     )
 }
 
