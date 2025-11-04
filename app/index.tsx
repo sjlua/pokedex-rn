@@ -94,10 +94,7 @@ export default function Index() {
   return (
     // replaces standard unscrollable view with scrollable
     <ScrollView
-    contentContainerStyle={{
-      gap: 20,
-      padding: 20
-    }}>
+    contentContainerStyle={{ gap: 10, padding: 10 }}>
       {listPokemon.map((pokemon: Pokemon) => (
         <Link
         key={pokemon.name}
@@ -164,7 +161,7 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   cardLayout: {
-    padding: 20,
+    padding: 25,
     borderRadius: 20,
   },
 

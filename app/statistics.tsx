@@ -87,11 +87,9 @@ export default function Statistics() {
   return (
     // replaces standard unscrollable view with scrollable
     <ScrollView
-    contentContainerStyle={[{
-      gap: 20,
-      padding: 20,
-    },
-    pokemon ? {backgroundColor: bgColourByType[pokemon.types[0].type.name] + 70} : {}
+    contentContainerStyle={[
+      { gap: 30, padding: 10 }, 
+      pokemon ? {backgroundColor: bgColourByType[pokemon.types[0].type.name] + 70} : {}
     ]}>
       {/* null guard against unloaded stats */}
       {!pokemon ? (
@@ -99,9 +97,11 @@ export default function Statistics() {
       ) : (
         <View key={pokemon.name}>
           <Text style={styles.name}>{pokemon.name.toUpperCase()}</Text>
+
           {pokemon.types.map((type) => (
             <Text key={pokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
           ))}
+
           <View style={styles.imagesRow}>
             <Image source={{ uri: pokemon.imageFrontLink }} style={{ width: 150, height: 150 }} />
             <Image source={{ uri: pokemon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />
