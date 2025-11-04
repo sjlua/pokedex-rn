@@ -8,7 +8,7 @@ interface Pokemon {
   imageFrontShinyLink: string;
 }
 
-export default function Profile() {
+export default function PartnerPokemon() {
     const [query, setQuery] = useState<string>(""); // user input field
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
     const [favouriteMon, setFavouriteMon] = useState<Pokemon | null>(null)
@@ -53,10 +53,10 @@ export default function Profile() {
 
     return (
         <ScrollView 
-        contentContainerStyle={{ gap: 10, padding: 20 }}>
+        contentContainerStyle={{ gap: 10, padding: 10 }}>
             { !favouriteMon ? (
                 <View style={styles.container}>
-                    <Text style={styles.question}>What's your favourite Pokémon?</Text>
+                    <Text style={styles.question}>Who's your Partner Pokémon?</Text>
                     <TextInput 
                         placeholder="Name or national pokedex number (e.g. pikachu or 25)"
                         value={query}
@@ -85,12 +85,12 @@ export default function Profile() {
                         </View>
                         
                         {boolShowShiny ? 
-                        (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
-                        : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
+                            (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
+                            : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
                     </View>
 
                     <View style={styles.container}>
-                        <Text style={styles.smallQuestion}>{"Change your favourite?"}</Text>
+                        <Text style={styles.question}>{"Change your favourite?"}</Text>
                         <TextInput 
                             placeholder="Name or national pokedex number (e.g. pikachu or 25)"
                             value={query}
