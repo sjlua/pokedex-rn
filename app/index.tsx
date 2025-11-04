@@ -140,18 +140,23 @@ export default function Index() {
       <View style={styles.buttonRow}>
         {/* Don't allow the user to request for less pokemon than 10, since 10 is the page increment */}
         {currentPage < 10 ? null : <Button 
-        title="Less"
+        title="View Less"
         onPress={() => {
-          const updatePage: number = currentPage > 11 ? currentPage - 10 : currentPage
+          const updatePage: number = currentPage >= 11 ? currentPage - 10 : currentPage
           // Update current page number
+          console.log(currentPage)
           setCurrentPage(updatePage)
         }}/>}
-        <Button 
-        title="More"
-        onPress={() => {
-          const updatePage: number = currentPage + 10
-          setCurrentPage(updatePage)
-        }}/>
+
+        {/* extra view needed to allow right aligned More text */}
+        <View style={{marginLeft: "auto"}}>
+          <Button 
+            title="View More"
+            onPress={() => {
+              const updatePage: number = currentPage + 10
+              setCurrentPage(updatePage)
+          }}/>
+        </View>
       </View>
     </ScrollView>
   );
@@ -193,6 +198,6 @@ const styles = StyleSheet.create({
 
   buttonRow: {
     flexDirection: "row",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   }
 })
