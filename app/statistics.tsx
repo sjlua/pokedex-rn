@@ -102,7 +102,10 @@ export default function Statistics() {
           {pokemon.types.map((type) => (
             <Text key={pokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
           ))}
-          <Image source={{ uri: pokemon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />
+          <View style={styles.imagesRow}>
+            <Image source={{ uri: pokemon.imageFrontLink }} style={{ width: 150, height: 150 }} />
+            <Image source={{ uri: pokemon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />
+          </View>
           {pokemon.abilities.map((ability) => (
             <Text key={pokemon.name + ability.ability.name} style={styles.standard}>{ability.ability.name}</Text>
           ))}
@@ -122,6 +125,12 @@ export default function Statistics() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+        alignItems: "center", 
+        width: "100%",
+        gap: 8
+    },
+    
   name: {
     fontSize: 40,
     fontWeight: 'bold'
@@ -135,5 +144,12 @@ const styles = StyleSheet.create({
 
   standard: {
     fontSize: 18,
-  }
+  },
+
+  imagesRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
 })
