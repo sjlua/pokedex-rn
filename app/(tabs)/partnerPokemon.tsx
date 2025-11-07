@@ -1,3 +1,4 @@
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useEffect, useState } from "react";
 import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, ToastAndroid, View } from "react-native";
 
@@ -38,6 +39,8 @@ const bgColourByType: Record<string, string> = {
 }
 
 export default function PartnerPokemon() {
+    const bottomBarTabHeight = useBottomTabBarHeight();
+
     const [query, setQuery] = useState<string>(""); // user input field
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
     const [favouriteMon, setFavouriteMon] = useState<Pokemon | null>(null)
@@ -84,7 +87,7 @@ export default function PartnerPokemon() {
     return (
         <ScrollView
             contentContainerStyle={[
-              { gap: 30, padding: 10 }, 
+              { gap: 30, padding: 10, paddingBottom: 10 + bottomBarTabHeight }, 
               favouriteMon ? {backgroundColor: bgColourByType[favouriteMon.types[0].type.name] + 70} : {}
             ]}>
             { !favouriteMon ? (
@@ -107,7 +110,7 @@ export default function PartnerPokemon() {
                         }}/>
                 </View>
             ) : (
-                <ScrollView key={favouriteMon.name} contentContainerStyle={{ gap: 20, padding: 10 }}>
+                <ScrollView key={favouriteMon.name} contentContainerStyle={{ gap: 20, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
                     <View style={styles.container}>
                         <Text style={styles.name}>{favouriteMon.name.toUpperCase()}</Text>
 

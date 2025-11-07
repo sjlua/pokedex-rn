@@ -1,3 +1,4 @@
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useEffect, useState } from "react";
 import { Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
 
@@ -10,6 +11,8 @@ interface Pokemon {
 }
 
 export default function Search() {
+    const bottomBarTabHeight = useBottomTabBarHeight();
+
     const [query, setQuery] = useState<string>(""); // user input field
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
     const [pokemonName, setPokemonName] = useState<string | null>(null);
@@ -46,7 +49,7 @@ export default function Search() {
         // If a pokemon hasn't been searched for, show default UI
         !pokemonName ?
         (<ScrollView 
-        contentContainerStyle={{ gap: 10, padding: 10 }}>
+        contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
             <View style={styles.container}>
                 <Text style={styles.question}>{"Search for a Pokémon"}</Text>
                 <TextInput 

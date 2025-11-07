@@ -97,7 +97,7 @@ export default function Index() {
   return (
     // replaces standard unscrollable view with scrollable
     <ScrollView
-    contentContainerStyle={{ gap: 10, padding: 10 }}>
+    contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
       {listPokemon.map((pokemon: Pokemon) => (
         <Link
         key={pokemon.name}
