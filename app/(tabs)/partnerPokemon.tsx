@@ -85,74 +85,82 @@ export default function PartnerPokemon() {
     }
 
     return (
+        !favouriteMon ? (
+            <ScrollView
+                contentContainerStyle={[
+                    { gap: 30, padding: 10, paddingBottom: 10 + bottomBarTabHeight }
+            ]}>
+
+            <View style={styles.container}>
+                <Text style={styles.question}>Who's your Partner Pokémon?</Text>
+                <TextInput 
+                    placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                    value={query}
+                    onChangeText={setQuery}
+                    autoCapitalize="none"/>
+                <Button
+                    key={"enter"} 
+                    title="Enter"
+                    color={"#b60c0cff"}
+                    accessibilityLabel="Submit your Pokémon." 
+                    onPress={() => {
+                        if (!query.trim()) return;
+                        setSelectedName(query.trim());
+                        setQuery("")
+                    }}/>
+            </View>
+        </ScrollView>
+        ) : (
         <ScrollView
             contentContainerStyle={[
-              { gap: 30, padding: 10, paddingBottom: 10 + bottomBarTabHeight }, 
-              favouriteMon ? {backgroundColor: bgColourByType[favouriteMon.types[0].type.name] + 70} : {}
+            { gap: 100, padding: 10, paddingBottom: 10 + bottomBarTabHeight }, 
+                    favouriteMon ? {backgroundColor: bgColourByType[favouriteMon.types[0].type.name] + 70} : {}
             ]}>
-            { !favouriteMon ? (
-                <View style={styles.container}>
-                    <Text style={styles.question}>Who's your Partner Pokémon?</Text>
-                    <TextInput 
-                        placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                        value={query}
-                        onChangeText={setQuery}
-                        autoCapitalize="none"/>
-                    <Button
-                        key={"enter"} 
-                        title="Enter"
-                        color={"#b60c0cff"}
-                        accessibilityLabel="Submit your Pokémon." 
-                        onPress={() => {
-                            if (!query.trim()) return;
-                            setSelectedName(query.trim());
-                            setQuery("")
-                        }}/>
+            {/* Pokemon details */}
+            <View style={styles.container}>
+                <Text style={styles.name}>{favouriteMon.name.toUpperCase()}</Text>
+                <Text style={styles.standard}>National Pokédex: {favouriteMon.pokedex}</Text>
+
+                <View style={styles.typesRow}>
+                                {favouriteMon.types.map((type) => (
+                                <Text key={favouriteMon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
+                            ))}
+                            </View>
+
+                <View style={styles.row}>
+                    <Text>Show shiny</Text>
+                <Switch
+                    value={boolShowShiny}
+                    onValueChange={(next: boolean) => setShowStatus(next)}
+                    accessibilityLabel="Show shiny"/>
                 </View>
-            ) : (
-                <ScrollView key={favouriteMon.name} contentContainerStyle={{ gap: 20, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
-                    <View style={styles.container}>
-                        <Text style={styles.name}>{favouriteMon.name.toUpperCase()}</Text>
-
-                        <View style={styles.typesRow}>
-                                      {favouriteMon.types.map((type) => (
-                                      <Text key={favouriteMon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
-                                    ))}
-                                    </View>
-
-                        <View style={styles.row}>
-                            <Text>Show shiny</Text>
-                        <Switch
-                            value={boolShowShiny}
-                            onValueChange={(next: boolean) => setShowStatus(next)}
-                            accessibilityLabel="Show shiny"/>
-                        </View>
-                        
-                        {boolShowShiny ? 
-                            (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
-                            : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
-                    </View>
-
-                    <View style={styles.container}>
-                        <Text style={styles.question}>{"Want to change your favourite?"}</Text>
-                        <TextInput 
-                            placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                            value={query}
-                            onChangeText={setQuery}
-                            autoCapitalize="none"/>
-                        <Button                    
-                            key={"enter"} 
-                            title="Enter"
-                            accessibilityLabel="Submit your Pokémon." 
-                            onPress={() => {
-                                if (!query.trim()) return;
-                                setSelectedName(query.trim());
-                                setQuery("")
-                            }}/>
-                    </View>                    
-                </ScrollView>
-            )}
+                
+                {boolShowShiny ? 
+                    (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
+                    : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
+            </View>  
+            
+            {/* Change section */}
+            <View>
+                <Text style={styles.question}>{"Want to change your favourite?"}</Text>
+                <TextInput 
+                    placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                    value={query}
+                    onChangeText={setQuery}
+                    autoCapitalize="none"/>
+                <Button                    
+                    key={"enter"} 
+                    title="Enter"
+                    color={"#b60c0cff"}
+                    accessibilityLabel="Submit your Pokémon." 
+                    onPress={() => {
+                        if (!query.trim()) return;
+                        setSelectedName(query.trim());
+                        setQuery("")
+                    }}/>
+            </View>
         </ScrollView>
+        )
     )
 }
 
@@ -199,5 +207,9 @@ const styles = StyleSheet.create({
     fontSize: 28,
     fontStyle: 'italic',
     color: 'grey',
-  },
+    },
+
+    standard: {
+    fontSize: 18,
+    },
 })
