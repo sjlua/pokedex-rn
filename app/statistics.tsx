@@ -97,6 +97,7 @@ export default function Statistics() {
       ) : (
         <View key={pokemon.name}>
           <Text style={styles.name}>{pokemon.name.toUpperCase()}</Text>
+          <Text style={styles.standard}>National Pokédex: {pokemon.pokedex}</Text>
 
           {pokemon.types.map((type) => (
             <Text key={pokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
