@@ -141,7 +141,6 @@ export default function Index() {
         onPress={() => {
           const updatePage: number = currentPage >= 11 ? currentPage - 10 : currentPage
           // Update current page number
-          console.log(currentPage)
           setCurrentPage(updatePage)
         }}/>}
 

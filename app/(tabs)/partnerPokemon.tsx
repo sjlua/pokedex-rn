@@ -6,6 +6,35 @@ interface Pokemon {
   name: string;
   imageFrontLink: string;
   imageFrontShinyLink: string;
+  types: PokemonTypeObject[];
+}
+
+interface PokemonTypeObject {
+  type: {
+    name: string;
+    url: string;
+  }
+}
+
+const bgColourByType: Record<string, string> = {
+  normal: "#A8A77A",
+  fire: "#F5AC78",
+  water: "#7BC0FF",
+  electric: "#F7D66B",
+  grass: "#9AEF89",
+  ice: "#BEEAF4",
+  fighting: "#E68A7A",
+  poison: "#CDA0E0",
+  ground: "#E4C77E",
+  flying: "#C6B6FF",
+  psychic: "#FF8FA3",
+  bug: "#C9E078",
+  rock: "#D2C17A",
+  ghost: "#C7B8E6",
+  dragon: "#A78BFF",
+  dark: "#BFA88F",
+  steel: "#D6D6E0",
+  fairy: "#F4B6D9"
 }
 
 export default function PartnerPokemon() {
@@ -40,6 +69,7 @@ export default function PartnerPokemon() {
                     name: jsonData.name,
                     imageFrontLink: jsonData.sprites.front_default,
                     imageFrontShinyLink: jsonData.sprites.front_shiny,
+                    types: jsonData.types, // already matches PokemonTypeObject[]
                 }
 
                 // update favourite pokemon stats
@@ -52,8 +82,11 @@ export default function PartnerPokemon() {
     }
 
     return (
-        <ScrollView 
-        contentContainerStyle={{ gap: 10, padding: 10 }}>
+        <ScrollView
+            contentContainerStyle={[
+              { gap: 30, padding: 10 }, 
+              favouriteMon ? {backgroundColor: bgColourByType[favouriteMon.types[0].type.name] + 70} : {}
+            ]}>
             { !favouriteMon ? (
                 <View style={styles.container}>
                     <Text style={styles.question}>Who's your Partner Pokémon?</Text>
@@ -76,6 +109,13 @@ export default function PartnerPokemon() {
                 <ScrollView key={favouriteMon.name} contentContainerStyle={{ gap: 20, padding: 10 }}>
                     <View style={styles.container}>
                         <Text style={styles.name}>{favouriteMon.name.toUpperCase()}</Text>
+
+                        <View style={styles.typesRow}>
+                                      {favouriteMon.types.map((type) => (
+                                      <Text key={favouriteMon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
+                                    ))}
+                                    </View>
+
                         <View style={styles.row}>
                             <Text>Show shiny</Text>
                         <Switch
@@ -90,7 +130,7 @@ export default function PartnerPokemon() {
                     </View>
 
                     <View style={styles.container}>
-                        <Text style={styles.question}>{"Change your favourite?"}</Text>
+                        <Text style={styles.question}>{"Want to change your favourite?"}</Text>
                         <TextInput 
                             placeholder="Name or national pokedex number (e.g. pikachu or 25)"
                             value={query}
@@ -122,7 +162,7 @@ const styles = StyleSheet.create({
     row: {
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center",
+        alignItems: "center", // aligns in (y=0 axis)
         width: "100%"
     },
 
@@ -143,5 +183,17 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 40,
         fontWeight: 'bold'
-    }
+    },
+
+    typesRow: {
+    flexDirection: "row",
+    justifyContent: "center",
+    gap: 10
+    },
+
+    type: {
+    fontSize: 28,
+    fontStyle: 'italic',
+    color: 'grey',
+  },
 })
