@@ -1,3 +1,4 @@
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import { Button, Image, ScrollView, StyleSheet, Text, View } from "react-native";
@@ -40,6 +41,8 @@ const bgColourByType: Record<string, string> = {
 }
 
 export default function Index() {
+  const bottomBarTabHeight = useBottomTabBarHeight();
+
   // a list of Pokemon objects and the setter?
   const [listPokemon, setPokemonData] = useState<Pokemon[]>([]);
 
@@ -138,6 +141,7 @@ export default function Index() {
         {/* Don't allow the user to request for less pokemon than 10, since 10 is the page increment */}
         {currentPage < 10 ? null : <Button 
         title="View Less"
+        color={"#b60c0cff"}
         onPress={() => {
           const updatePage: number = currentPage >= 11 ? currentPage - 10 : currentPage
           // Update current page number
@@ -148,6 +152,7 @@ export default function Index() {
         <View style={{marginLeft: "auto"}}>
           <Button 
             title="View More"
+            color={"#b60c0cff"}
             onPress={() => {
               const updatePage: number = currentPage + 10
               setCurrentPage(updatePage)

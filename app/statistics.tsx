@@ -112,7 +112,8 @@ export default function Statistics() {
           {/* open serebii in the device browser */}
           <Button
           key={pokemon.pokedex} 
-          title="PokemonDB"
+          title="More stats on PokemonDB"
+          color={"#b60c0cff"}
           accessibilityLabel="View more on Pokemon DB" 
           onPress={() => {
             const url = `https://pokemondb.net/pokedex/${pokemon.name}`;

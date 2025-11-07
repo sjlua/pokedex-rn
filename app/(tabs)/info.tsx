@@ -8,6 +8,7 @@ export default function Info() {
             </Text>
             <Button
             title={"Visit pokeapi.co"}
+            color={"#b60c0cff"}
             onPress={() => {
                 const url = `https://pokeapi.co`;
                 Linking.openURL(url).catch((err) => console.log('Failed to open URL', err));

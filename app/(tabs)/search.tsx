@@ -43,6 +43,7 @@ export default function Search() {
     }
 
     return (
+        // If a pokemon hasn't been searched for, show default UI
         !pokemonName ?
         (<ScrollView 
         contentContainerStyle={{ gap: 10, padding: 10 }}>
@@ -56,6 +57,7 @@ export default function Search() {
                 <Button
                     key={"search"} 
                     title="Search"
+                    color={"#b60c0cff"}
                     accessibilityLabel="Search for a Pokémon." 
                     onPress={() => {
                         if (!query.trim()) return;
@@ -64,6 +66,7 @@ export default function Search() {
                     }}/>
             </View>
         </ScrollView>) :
+        // Only if a Pokemon has been searched and returned successfully, return this view
         (<ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
             <View style={styles.container}>
             <Text style={styles.question}>{pokemonName.toLocaleUpperCase()}</Text>
@@ -76,6 +79,7 @@ export default function Search() {
             <Button                    
                 key={"enter"} 
                 title="Enter"
+                color={"#b60c0cff"}
                 accessibilityLabel="Search for a Pokémon." 
                 onPress={() => {
                     if (!query.trim()) return;

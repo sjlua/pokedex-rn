@@ -98,6 +98,7 @@ export default function PartnerPokemon() {
                     <Button
                         key={"enter"} 
                         title="Enter"
+                        color={"#b60c0cff"}
                         accessibilityLabel="Submit your Pokémon." 
                         onPress={() => {
                             if (!query.trim()) return;
