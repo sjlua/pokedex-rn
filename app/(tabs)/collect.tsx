@@ -2,7 +2,7 @@ import { Picker } from '@react-native-picker/picker';
 import { Text } from "@react-navigation/elements";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, View } from "react-native";
+import { Button, FlatList, Image, StyleSheet, View } from "react-native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 
 interface Pokemon {
@@ -41,6 +41,8 @@ const bgColourByType: Record<string, string> = {
 }
 
 export default function Collection() {
+    // view region picker button
+    const [viewRegionPicker, setRegionPicker] = useState<boolean>(false);
     // region picker
     const [selectedRegion, setRegion] = useState<number>(0);
     
@@ -103,12 +105,23 @@ export default function Collection() {
     const loadMorePokemon = async () => {
         setCurrentPage(currentPage + 18)
     };
+
+    const showRegionPicker = async () => {
+        viewRegionPicker ? setRegionPicker(false) : setRegionPicker(true)
+    }
     
     return (
         // replaces standard unscrollable view with scrollable
         <SafeAreaProvider>
             <SafeAreaView>
-                <Picker
+                <View style={styles.questionRow}>
+                    <Text style={styles.question}>{"Fly to another region?"}</Text>
+                    <Button title={viewRegionPicker ? "Close" : "Search"} color={"#b60c0cff"} onPress={() => showRegionPicker()}/>
+                </View>
+
+                { viewRegionPicker ? <View>
+                    <Text style={styles.smallQuestion}>{"By flying to another region, you can see all the Pokémon in that region, and beyond."}</Text>
+                    <Picker
                     selectedValue={selectedRegion}
                     onValueChange={(itemValue, _) =>
                         setRegion(itemValue)
@@ -123,6 +136,8 @@ export default function Collection() {
                     <Picker.Item label="Galar" value="809" />
                     <Picker.Item label="Paldea" value="905" />
                 </Picker>
+                </View> : null
+                }
                 <FlatList 
                     data={listPokemon}
                     numColumns={3}
@@ -161,7 +176,7 @@ export default function Collection() {
                             <View style={styles.imagesRow}>
                             <Image
                             source={{uri: item.imageFrontLink}}
-                            style={{ width: 150, height: 150 }} />
+                            style={{ width: 150, height: 130 }} />
                             </View>
                         </View>
                         </Link>
@@ -179,10 +194,25 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
 
+    questionRow: {
+        flexDirection: "row",
+        width: "100%",
+        gap: 5,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    smallQuestion: {
+        fontSize: 15,
+        fontStyle: "italic",
+        textAlign: "center",
+        paddingHorizontal: 5
+    },
+
     cardLayout: {
         width: "33%",
-        padding: 10,
-        borderRadius: 20,
+        padding: 8,
+        borderRadius: 10,
     },
 
     cardContent: {
