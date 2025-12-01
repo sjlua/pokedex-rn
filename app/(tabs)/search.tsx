@@ -1,13 +1,40 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Button, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
+import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
 
 interface Pokemon {
-  pokedex: number;
   name: string;
   imageFrontLink: string;
-  imageBackLink: string;
-  imageFrontShinyLink: string;
+  types: PokemonTypeObject[];
+}
+
+interface PokemonTypeObject {
+  type: {
+    name: string;
+    url: string;
+  }
+}
+
+const bgColourByType: Record<string, string> = {
+  normal: "#A8A77A",
+  fire: "#F5AC78",
+  water: "#7BC0FF",
+  electric: "#F7D66B",
+  grass: "#9AEF89",
+  ice: "#BEEAF4",
+  fighting: "#E68A7A",
+  poison: "#CDA0E0",
+  ground: "#E4C77E",
+  flying: "#C6B6FF",
+  psychic: "#FF8FA3",
+  bug: "#C9E078",
+  rock: "#D2C17A",
+  ghost: "#C7B8E6",
+  dragon: "#A78BFF",
+  dark: "#BFA88F",
+  steel: "#D6D6E0",
+  fairy: "#F4B6D9"
 }
 
 export default function Search() {
@@ -15,7 +42,7 @@ export default function Search() {
 
     const [query, setQuery] = useState<string>(""); // user input field
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
-    const [pokemonName, setPokemonName] = useState<string | null>(null);
+    const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
 
     useEffect(() => { searchPokemon() }, [selectedName])
 
@@ -37,7 +64,14 @@ export default function Search() {
                 throw new Error(bodyText || `Request failed with status ${unformattedResponse.status}`);
                 }
 
-                setPokemonName(jsonData.name)
+                const mapJsonToPokemon: Pokemon = {
+                    name: jsonData.name,
+                    imageFrontLink: jsonData.sprites.front_default,
+                    types: jsonData.types, // already matches PokemonTypeObject[]
+                }
+
+                // set the pokemon stats
+                setPokemon(mapJsonToPokemon)
             }
         }
         catch (e) {
@@ -47,7 +81,7 @@ export default function Search() {
 
     return (
         // If a pokemon hasn't been searched for, show default UI
-        !pokemonName ?
+        !selectedPokemon ?
         (<ScrollView 
         contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
             <View style={styles.container}>
@@ -72,7 +106,6 @@ export default function Search() {
         // Only if a Pokemon has been searched and returned successfully, return this view
         (<ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
             <View style={styles.container}>
-            <Text style={styles.question}>{pokemonName.toLocaleUpperCase()}</Text>
             <Text style={styles.question}>{"Search for a new Pokémon?"}</Text>
             <TextInput 
                 placeholder="Name or national pokedex number (e.g. pikachu or 25)"
@@ -90,6 +123,40 @@ export default function Search() {
                     setQuery("")
                 }}/>
             </View>    
+
+            <Link
+                key={selectedPokemon.name}
+                href={{ pathname: "/statistics", params: {name: selectedPokemon.name}}}
+                style={[styles.cardLayout, 
+                    {
+                    // + 70 makes the opacity 70%
+                    // ignore type warning
+                    // @ts-ignore
+                    backgroundColor: bgColourByType[selectedPokemon.types[0].type.name] + 70,
+                    }, styles.imagesRow]}>
+                    {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
+                    <View style={styles.cardContent}>
+        
+                    {/* Name */}
+                    <Text style={styles.name}>
+                        {selectedPokemon.name.toLocaleUpperCase()}
+                    </Text>
+        
+                    {/* Types */}
+                    <View style={styles.typesRow}>
+                        {selectedPokemon.types.map((type) => (
+                        <Text key={selectedPokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
+                    ))}
+                    </View>
+        
+                    {/* Sprites */}
+                    <View>
+                        <Image
+                        source={{uri: selectedPokemon.imageFrontLink}}
+                        style={{ width: 150, height: 150 }} />
+                    </View>
+                    </View>
+                </Link>
         </ScrollView>)
     )
 }
@@ -99,6 +166,28 @@ const styles = StyleSheet.create({
         alignItems: "center", 
         width: "100%",
         gap: 8
+    },
+
+    cardLayout: {
+        padding: 25,
+        borderRadius: 20,
+    },
+
+    typesRow: {
+        flexDirection: "row",
+        justifyContent: "center",
+        gap: 10
+    },
+
+    type: {
+        fontSize: 20,
+        fontStyle: 'italic',
+        color: 'grey',
+    },
+
+    cardContent: {
+        width: "100%", // needed to allow centring to take up full width and actually be centred
+        alignItems: "center", // center content horizontally and vertically inside each card
     },
 
     question: {
@@ -118,5 +207,11 @@ const styles = StyleSheet.create({
     name: {
         fontSize: 40,
         fontWeight: 'bold'
-    }
+    },
+
+    imagesRow: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+    },
 })
