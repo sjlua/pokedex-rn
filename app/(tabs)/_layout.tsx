@@ -29,6 +29,16 @@ export default function TabsLayout() {
       />
 
       <Tabs.Screen
+        name="collect"
+        options={{
+          title: "Collection",
+          tabBarIcon: ({ color, size }) => (
+            <MaterialIcons name="my-library-add" size={size} color={color} />
+          )
+        }}
+      />
+
+      <Tabs.Screen
         name="search"
         options={{
           title: "Search",
