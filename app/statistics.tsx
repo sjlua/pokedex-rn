@@ -1,6 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
-import { Button, Image, Linking, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Button, Image, Linking, ScrollView, StyleSheet, Text, useColorScheme, View } from "react-native";
+import { Colours } from "../constants/colours";
 
 interface Pokemon {
   pokedex: number;
@@ -59,6 +60,10 @@ export default function Statistics() {
     fetchPokemonByName(params.name)
   }, [params.name])
 
+  // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
+  const colourScheme = useColorScheme() ?? 'light'
+  const theme = Colours[colourScheme]
+
   async function fetchPokemonByName(name: string) {
     try {
       // fetch takes URL and receives a response
@@ -96,25 +101,27 @@ export default function Statistics() {
         <Text>{"Loading data..."}</Text>
       ) : (
         <View key={pokemon.name}>
-          <Text style={styles.name}>{pokemon.name.toUpperCase()}</Text>
-          <Text style={styles.standard}>National Pokédex: {pokemon.pokedex}</Text>
+          <Text style={[styles.name, {color: theme.title}]}>{pokemon.name.toUpperCase()}</Text>
+          <Text style={[styles.standard, {color: theme.text}]}>National Pokédex: {pokemon.pokedex}</Text>
 
           {pokemon.types.map((type) => (
-            <Text key={pokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
+            <Text key={pokemon.name + type.type.name} style={[styles.type, {color: theme.subtext}]}>{type.type.name}</Text>
           ))}
 
           <View style={styles.imagesRow}>
             <Image source={{ uri: pokemon.imageFrontLink }} style={{ width: 150, height: 150 }} />
             <Image source={{ uri: pokemon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />
           </View>
+
           {pokemon.abilities.map((ability) => (
-            <Text key={pokemon.name + ability.ability.name} style={styles.standard}>{ability.ability.name}</Text>
+            <Text key={pokemon.name + ability.ability.name} style={[styles.standard, {color: theme.text}]}>{ability.ability.name}</Text>
           ))}
+
           {/* open serebii in the device browser */}
           <Button
           key={pokemon.pokedex} 
           title="More stats on PokemonDB"
-          color={"#b60c0cff"}
+          color={theme.iconColorFocused}
           accessibilityLabel="View more on Pokemon DB" 
           onPress={() => {
             const url = `https://pokemondb.net/pokedex/${pokemon.name}`;
