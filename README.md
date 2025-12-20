@@ -3,6 +3,15 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 All Pokémon names and references used belong to Nintendo and The Pokémon Company Inc. I do not claim ownership over any IP related to Pokémon.
 
+## Future features
+- [x] Light/dark mode support.
+- [ ] Storing partner Pokemon locally to your device.
+- [ ] Add more statistics to the Statistics page such as Moves.
+- [ ] Add logo.
+- [ ] Code cleanup and refactoring.
+- [ ] Checklist for storing Pokemon caught status.
+- [ ] Onboarding flow which highlights core features.
+
 ## Credits
 This app was based on [Code with Beto](https://youtu.be/BUXnASp_WyQ)'s tutorial.
 
