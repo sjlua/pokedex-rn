@@ -1,6 +1,7 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { useEffect, useState } from "react";
-import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, ToastAndroid, View } from "react-native";
+import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Switch, Text, TextInput, ToastAndroid, useColorScheme, View } from "react-native";
+import { Colours } from "../../constants/colours";
 
 interface Pokemon {
   pokedex: number;
@@ -46,6 +47,10 @@ export default function PartnerPokemon() {
     const [favouriteMon, setFavouriteMon] = useState<Pokemon | null>(null)
     const [boolShowShiny, setShowStatus] = useState<boolean>(false); // show shiny toggle
 
+    // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
+    const colourScheme = useColorScheme() ?? 'light'
+    const theme = Colours[colourScheme]
+
     useEffect(() => { getFavouritePokemonStats() }, [selectedName])
 
     async function getFavouritePokemonStats() {
@@ -53,13 +58,15 @@ export default function PartnerPokemon() {
             if (selectedName) {
                 // fetch takes URL and receives a response
                 const unformattedResponse = await fetch("https://pokeapi.co/api/v2/pokemon/" + selectedName);
-
+                
                 // handle non-2xx responses before attempting to parse JSON
                 if (!unformattedResponse.ok) {
                 const bodyText = await unformattedResponse.text();
-                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toLocaleUpperCase()}.`
+                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toLocaleUpperCase()}.`;
                 // show error message to user
-                Platform.OS === 'android' ? ToastAndroid.show(errString, ToastAndroid.SHORT) : Alert.alert('Error', errString)
+                Platform.OS === 'android' 
+                    ? ToastAndroid.show(errString, ToastAndroid.SHORT) 
+                    : Alert.alert('Error', errString)
                 // show error in console
                 throw new Error(bodyText || `Request failed with status ${unformattedResponse.status}`);
                 }
@@ -85,82 +92,90 @@ export default function PartnerPokemon() {
     }
 
     return (
-        !favouriteMon ? (
-            <ScrollView
-                contentContainerStyle={[
-                    { gap: 30, padding: 10, paddingBottom: 10 + bottomBarTabHeight }
-            ]}>
+        <View style={{backgroundColor: theme.background, flex: 1}}>
+            {
+                !favouriteMon ? (
+                    <ScrollView
+                        contentContainerStyle={[
+                            { gap: 30, padding: 10, paddingBottom: 10 + bottomBarTabHeight }
+                    ]}>
 
-            <View style={styles.container}>
-                <Text style={styles.question}>Who's your Partner Pokémon?</Text>
-                <TextInput 
-                    placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                    value={query}
-                    onChangeText={setQuery}
-                    autoCapitalize="none"/>
-                <Button
-                    key={"enter"} 
-                    title="Enter"
-                    color={"#b60c0cff"}
-                    accessibilityLabel="Submit your Pokémon." 
-                    onPress={() => {
-                        if (!query.trim()) return;
-                        setSelectedName(query.trim());
-                        setQuery("")
-                    }}/>
-            </View>
-        </ScrollView>
-        ) : (
-        <ScrollView
-            contentContainerStyle={[
-            { gap: 100, padding: 10, paddingBottom: 10 + bottomBarTabHeight }, 
-                    favouriteMon ? {backgroundColor: bgColourByType[favouriteMon.types[0].type.name] + 70} : {}
-            ]}>
-            {/* Pokemon details */}
-            <View style={styles.container}>
-                <Text style={styles.name}>{favouriteMon.name.toUpperCase()}</Text>
-                <Text style={styles.standard}>National Pokédex: {favouriteMon.pokedex}</Text>
+                    <View style={styles.container}>
+                        <Text style={[styles.question, {color: theme.title}]}>Who's your Partner Pokémon?</Text>
+                        <TextInput 
+                            placeholderTextColor={theme.subtext}
+                            placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                            value={query}
+                            style={{color: theme.text}}
+                            onChangeText={setQuery}
+                            autoCapitalize="none"/>
+                        <Button
+                            key={"enter"} 
+                            title="Enter"
+                            color={theme.iconColorFocused}
+                            accessibilityLabel="Submit your Pokémon." 
+                            onPress={() => {
+                                if (!query.trim()) return;
+                                setSelectedName(query.trim());
+                                setQuery("")
+                            }}/>
+                    </View>
+                </ScrollView>
+                ) : (
+                <ScrollView
+                    contentContainerStyle={[
+                    { gap: 100, padding: 10, paddingBottom: 10 + bottomBarTabHeight }, 
+                            favouriteMon ? {backgroundColor: bgColourByType[favouriteMon.types[0].type.name] + 70} : {}
+                    ]}>
+                    {/* Pokemon details */}
+                    <View style={styles.container}>
+                        <Text style={[styles.name, {color: theme.title}]}>{favouriteMon.name.toUpperCase()}</Text>
+                        <Text style={[styles.standard, {color: theme.text}]}>National Pokédex: {favouriteMon.pokedex}</Text>
 
-                <View style={styles.typesRow}>
-                                {favouriteMon.types.map((type) => (
-                                <Text key={favouriteMon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
-                            ))}
-                            </View>
+                        <View style={styles.typesRow}>
+                                        {favouriteMon.types.map((type) => (
+                                        <Text key={favouriteMon.name + type.type.name} style={[styles.type, {color: theme.subtext}]}>{type.type.name}</Text>
+                                    ))}
+                                    </View>
 
-                <View style={styles.row}>
-                    <Text>Show shiny</Text>
-                <Switch
-                    value={boolShowShiny}
-                    onValueChange={(next: boolean) => setShowStatus(next)}
-                    accessibilityLabel="Show shiny"/>
-                </View>
-                
-                {boolShowShiny ? 
-                    (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
-                    : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
-            </View>  
-            
-            {/* Change section */}
-            <View>
-                <Text style={styles.question}>{"Want to change your favourite?"}</Text>
-                <TextInput 
-                    placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                    value={query}
-                    onChangeText={setQuery}
-                    autoCapitalize="none"/>
-                <Button                    
-                    key={"enter"} 
-                    title="Enter"
-                    color={"#b60c0cff"}
-                    accessibilityLabel="Submit your Pokémon." 
-                    onPress={() => {
-                        if (!query.trim()) return;
-                        setSelectedName(query.trim());
-                        setQuery("")
-                    }}/>
-            </View>
-        </ScrollView>
-        )
+                        <View style={styles.row}>
+                            <Text style={[styles.standard, {color: theme.text}]}>Show shiny?</Text>
+                        <Switch
+                            value={boolShowShiny}
+                            onValueChange={(next: boolean) => setShowStatus(next)}
+                            accessibilityLabel="Show shiny?"/>
+                        </View>
+                        
+                        {boolShowShiny ? 
+                            (<Image source={{ uri: favouriteMon.imageFrontShinyLink }} style={{ width: 150, height: 150 }} />) 
+                            : (<Image source={{ uri: favouriteMon.imageFrontLink }} style={{ width: 150, height: 150 }} />)}
+                    </View>  
+                    
+                    {/* Change section */}
+                    <View>
+                        <Text style={[styles.question, {color: theme.title}]}>{"Want to change your favourite?"}</Text>
+                        <TextInput 
+                            placeholderTextColor={theme.subtext}
+                            placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                            value={query}
+                            style={{color: theme.text}}
+                            onChangeText={setQuery}
+                            autoCapitalize="none"/>
+                        <Button                    
+                            key={"enter"} 
+                            title="Enter"
+                            color={theme.iconColorFocused}
+                            accessibilityLabel="Submit your Pokémon." 
+                            onPress={() => {
+                                if (!query.trim()) return;
+                                setSelectedName(query.trim());
+                                setQuery("")
+                            }}/>
+                    </View>
+                </ScrollView>
+                )
+            }
+        </View>
     )
 }
 

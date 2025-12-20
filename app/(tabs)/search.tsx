@@ -1,7 +1,8 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, View } from "react-native";
+import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, useColorScheme, View } from "react-native";
+import { Colours } from "../../constants/colours";
 
 interface Pokemon {
   name: string;
@@ -44,6 +45,10 @@ export default function Search() {
     const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
     const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
 
+    // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
+    const colourScheme = useColorScheme() ?? 'light'
+    const theme = Colours[colourScheme]
+
     useEffect(() => { searchPokemon() }, [selectedName])
 
     async function searchPokemon() {
@@ -51,26 +56,29 @@ export default function Search() {
             if (selectedName) {
                 // fetch takes URL and receives a response
                 const unformattedResponse = await fetch("https://pokeapi.co/api/v2/pokemon/" + selectedName);
-                // format to json
-                const jsonData = await unformattedResponse.json();
-
+                
                 // handle non-2xx responses before attempting to parse JSON
                 if (!unformattedResponse.ok) {
                 const bodyText = await unformattedResponse.text();
-                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toLocaleUpperCase()}.`
+                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toUpperCase()}.`;
                 // show error message to user
-                Platform.OS === 'android' ? ToastAndroid.show(errString, ToastAndroid.SHORT) : Alert.alert('Error', errString)
+                Platform.OS === 'android'
+                    ? ToastAndroid.show(errString, ToastAndroid.SHORT)
+                    : Alert.alert('Error', errString);
                 // show error in console
                 throw new Error(bodyText || `Request failed with status ${unformattedResponse.status}`);
                 }
+                
+                // format to json
+                const jsonData = await unformattedResponse.json();
 
                 const mapJsonToPokemon: Pokemon = {
-                    name: jsonData.name,
-                    imageFrontLink: jsonData.sprites.front_default,
-                    types: jsonData.types, // already matches PokemonTypeObject[]
-                }
+                name: jsonData.name,
+                imageFrontLink: jsonData.sprites.front_default,
+                types: jsonData.types,
+                };
 
-                // set the pokemon stats
+                setPokemon(mapJsonToPokemon);
                 setPokemon(mapJsonToPokemon)
             }
         }
@@ -80,84 +88,90 @@ export default function Search() {
     }
 
     return (
-        // If a pokemon hasn't been searched for, show default UI
-        !selectedPokemon ?
-        (<ScrollView 
-        contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
-            <View style={styles.container}>
-                <Text style={styles.question}>{"Search for a Pokémon"}</Text>
-                <TextInput 
-                    placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                    value={query}
-                    onChangeText={setQuery}
-                    autoCapitalize="none"/>
-                <Button
-                    key={"search"} 
-                    title="Search"
-                    color={"#b60c0cff"}
-                    accessibilityLabel="Search for a Pokémon." 
-                    onPress={() => {
-                        if (!query.trim()) return;
-                        setSelectedName(query.trim());
-                        setQuery("")
-                    }}/>
-            </View>
-        </ScrollView>) :
-        // Only if a Pokemon has been searched and returned successfully, return this view
-        (<ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
-            <View style={styles.container}>
-            <Text style={styles.question}>{"Search for a new Pokémon?"}</Text>
-            <TextInput 
-                placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                value={query}
-                onChangeText={setQuery}
-                autoCapitalize="none"/>
-            <Button                    
-                key={"enter"} 
-                title="Enter"
-                color={"#b60c0cff"}
-                accessibilityLabel="Search for a Pokémon." 
-                onPress={() => {
-                    if (!query.trim()) return;
-                    setSelectedName(query.trim());
-                    setQuery("")
-                }}/>
-            </View>    
+        <View style={{backgroundColor: theme.background, flex: 1}}>
+            {!selectedPokemon ?
+                (<ScrollView 
+                contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
+                    <View style={[styles.container]}>
+                        <Text style={[styles.question, {color: theme.title}]}>{"Search for a Pokémon"}</Text>
+                        <TextInput 
+                            placeholderTextColor={theme.subtext}
+                            placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                            value={query}
+                            style={{color: theme.text}}
+                            onChangeText={setQuery}
+                            autoCapitalize="none"/>
+                        <Button
+                            key={"search"} 
+                            title="Search"
+                            color={theme.iconColorFocused}
+                            accessibilityLabel="Search for a Pokémon." 
+                            onPress={() => {
+                                if (!query.trim()) return;
+                                setSelectedName(query.trim());
+                                setQuery("")
+                            }}/>
+                    </View>
+                </ScrollView>) :
+                // Only if a Pokemon has been searched and returned successfully, return this view
+                (<ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
+                    <View style={styles.container}>
+                    <Text style={[styles.question, {color: theme.title}]}>{"Search for a new Pokémon?"}</Text>
+                    <TextInput 
+                        placeholderTextColor={theme.subtext}
+                        placeholder="Name or national pokedex number (e.g. pikachu or 25)"
+                        value={query}
+                        style={{color: theme.text}}
+                        onChangeText={setQuery}
+                        autoCapitalize="none"/>
+                    <Button                    
+                        key={"enter"} 
+                        title="Enter"
+                        color={theme.iconColorFocused}
+                        accessibilityLabel="Search for a Pokémon." 
+                        onPress={() => {
+                            if (!query.trim()) return;
+                            setSelectedName(query.trim());
+                            setQuery("")
+                        }}/>
+                    </View>    
 
-            <Link
-                key={selectedPokemon.name}
-                href={{ pathname: "/statistics", params: {name: selectedPokemon.name}}}
-                style={[styles.cardLayout, 
-                    {
-                    // + 70 makes the opacity 70%
-                    // ignore type warning
-                    // @ts-ignore
-                    backgroundColor: bgColourByType[selectedPokemon.types[0].type.name] + 70,
-                    }, styles.imagesRow]}>
-                    {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
-                    <View style={styles.cardContent}>
-        
-                    {/* Name */}
-                    <Text style={styles.name}>
-                        {selectedPokemon.name.toLocaleUpperCase()}
-                    </Text>
-        
-                    {/* Types */}
-                    <View style={styles.typesRow}>
-                        {selectedPokemon.types.map((type) => (
-                        <Text key={selectedPokemon.name + type.type.name} style={styles.type}>{type.type.name}</Text>
-                    ))}
-                    </View>
-        
-                    {/* Sprites */}
-                    <View>
-                        <Image
-                        source={{uri: selectedPokemon.imageFrontLink}}
-                        style={{ width: 150, height: 150 }} />
-                    </View>
-                    </View>
-                </Link>
-        </ScrollView>)
+                    <Link
+                        key={selectedPokemon.name}
+                        href={{ pathname: "/statistics", params: {name: selectedPokemon.name}}}
+                        style={[styles.cardLayout, 
+                            {
+                            // + 70 makes the opacity 70%
+                            // ignore type warning
+                            // @ts-ignore
+                            backgroundColor: bgColourByType[selectedPokemon.types[0].type.name] + 70,
+                            }, styles.imagesRow]}>
+                            {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
+                            <View style={styles.cardContent}>
+                
+                            {/* Name */}
+                            <Text style={[styles.name, {color: theme.title}]}>
+                                {selectedPokemon.name.toLocaleUpperCase()}
+                            </Text>
+                
+                            {/* Types */}
+                            <View style={styles.typesRow}>
+                                {selectedPokemon.types.map((type) => (
+                                <Text key={selectedPokemon.name + type.type.name} style={[styles.type, {color: theme.subtext}]}>{type.type.name}</Text>
+                            ))}
+                            </View>
+                
+                            {/* Sprites */}
+                            <View>
+                                <Image
+                                source={{uri: selectedPokemon.imageFrontLink}}
+                                style={{ width: 150, height: 150 }} />
+                            </View>
+                            </View>
+                        </Link>
+                </ScrollView>)
+}
+        </View>
     )
 }
 

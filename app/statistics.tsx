@@ -98,7 +98,7 @@ export default function Statistics() {
     ]}>
       {/* null guard against unloaded stats */}
       {!pokemon ? (
-        <Text>{"Loading data..."}</Text>
+        <Text style={{color: theme.title}}>{"Loading data..."}</Text>
       ) : (
         <View key={pokemon.name}>
           <Text style={[styles.name, {color: theme.title}]}>{pokemon.name.toUpperCase()}</Text>
