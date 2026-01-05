@@ -272,6 +272,23 @@ export default function Search() {
             )}
           </View>
 
+          {/* Change Partner Section Header */}
+          <View style={styles.searchSection}>
+            <View style={styles.searchSectionHeader}>
+              <Ionicons
+                name="search-circle-outline"
+                size={20}
+                color={theme.iconColorFocused}
+              />
+              <Text style={[styles.searchTitle, { color: theme.title }]}>
+                Search for a new Pokémon
+              </Text>
+            </View>
+            <Text style={[styles.searchSubtitle, { color: theme.subtext }]}>
+              Curious about another Pokémon? Search again below.
+            </Text>
+          </View>
+
           {/* New Search Bar */}
           <View
             style={[
@@ -343,7 +360,6 @@ export default function Search() {
                 <Text style={[styles.pokemonName, { color: theme.title }]}>
                   {selectedPokemon.name.toLocaleUpperCase()}
                 </Text>
-                <Ionicons name="arrow-forward" size={20} color={theme.title} />
               </View>
 
               {/* Types */}
@@ -502,6 +518,25 @@ const styles = StyleSheet.create({
   backButtonText: {
     fontSize: 16,
     fontWeight: "500",
+  },
+
+  searchSection: {
+    gap: 8,
+  },
+
+  searchSectionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+
+  searchTitle: {
+    fontSize: 18,
+    fontWeight: "600",
+  },
+
+  searchSubtitle: {
+    fontSize: 14,
   },
 
   pokemonCard: {
