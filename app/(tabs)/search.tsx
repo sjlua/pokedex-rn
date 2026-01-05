@@ -87,92 +87,284 @@ export default function Search() {
         }
     }
 
-    return (
-        <View style={{backgroundColor: theme.background, flex: 1}}>
-            {!selectedPokemon ?
-                (<ScrollView 
-                contentContainerStyle={{ gap: 10, padding: 10, paddingBottom: 10 + bottomBarTabHeight }}>
-                    <View style={[styles.container]}>
-                        <Text style={[styles.question, {color: theme.title}]}>{"Search for a Pokémon"}</Text>
-                        <TextInput 
-                            placeholderTextColor={theme.subtext}
-                            placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                            value={query}
-                            style={{color: theme.text}}
-                            onChangeText={setQuery}
-                            autoCapitalize="none"/>
-                        <Button
-                            key={"search"} 
-                            title="Search"
-                            color={theme.iconColorFocused}
-                            accessibilityLabel="Search for a Pokémon." 
-                            onPress={() => {
-                                if (!query.trim()) return;
-                                setSelectedName(query.trim());
-                                setQuery("")
-                            }}/>
-                    </View>
-                </ScrollView>) :
-                // Only if a Pokemon has been searched and returned successfully, return this view
-                (<ScrollView contentContainerStyle={{ gap: 10, padding: 10 }}>
-                    <View style={styles.container}>
-                    <Text style={[styles.question, {color: theme.title}]}>{"Search for a new Pokémon?"}</Text>
-                    <TextInput 
-                        placeholderTextColor={theme.subtext}
-                        placeholder="Name or national pokedex number (e.g. pikachu or 25)"
-                        value={query}
-                        style={{color: theme.text}}
-                        onChangeText={setQuery}
-                        autoCapitalize="none"/>
-                    <Button                    
-                        key={"enter"} 
-                        title="Enter"
-                        color={theme.iconColorFocused}
-                        accessibilityLabel="Search for a Pokémon." 
-                        onPress={() => {
-                            if (!query.trim()) return;
-                            setSelectedName(query.trim());
-                            setQuery("")
-                        }}/>
-                    </View>    
+  const handleSearch = () => {
+    if (!query.trim()) return;
+    setSelectedName(query.trim());
+    setQuery("");
+  };
 
-                    <Link
-                        key={selectedPokemon.name}
-                        href={{ pathname: "/statistics", params: {name: selectedPokemon.name}}}
-                        style={[styles.cardLayout, 
-                            {
-                            // + 70 makes the opacity 70%
-                            // ignore type warning
-                            // @ts-ignore
-                            backgroundColor: bgColourByType[selectedPokemon.types[0].type.name] + 70,
-                            }, styles.imagesRow]}>
-                            {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
-                            <View style={styles.cardContent}>
-                
-                            {/* Name */}
-                            <Text style={[styles.name, {color: theme.title}]}>
-                                {selectedPokemon.name.toLocaleUpperCase()}
-                            </Text>
-                
-                            {/* Types */}
-                            <View style={styles.typesRow}>
-                                {selectedPokemon.types.map((type) => (
-                                <Text key={selectedPokemon.name + type.type.name} style={[styles.type, {color: theme.subtext}]}>{type.type.name}</Text>
-                            ))}
-                            </View>
-                
-                            {/* Sprites */}
-                            <View>
-                                <Image
-                                source={{uri: selectedPokemon.imageFrontLink}}
-                                style={{ width: 150, height: 150 }} />
-                            </View>
-                            </View>
-                        </Link>
-                </ScrollView>)
-}
-        </View>
-    )
+  const handleClearSearch = () => {
+    setQuery("");
+  };
+
+  const handleNewSearch = () => {
+    setPokemon(null);
+    setSelectedName(null);
+    setQuery("");
+  };
+
+  // Choose a selectionColor that provides better contrast depending on theme.
+  // In dark mode use a semi-opaque light highlight; in light mode use a subtle dark highlight.
+  const selectionColor =
+    colourScheme === "dark" ? "rgba(255,255,255,0.6)" : "rgba(0,0,0,0.25)";
+
+  return (
+    <View style={{ backgroundColor: theme.background, flex: 1 }}>
+      {!selectedPokemon ? (
+        <ScrollView
+          contentContainerStyle={{
+            gap: 16,
+            padding: 16,
+            paddingBottom: 16 + bottomBarTabHeight,
+          }}
+        >
+          {/* Header */}
+          <View style={styles.header}>
+            <Text style={[styles.title, { color: theme.title }]}>
+              Search Pokémon
+            </Text>
+            <Ionicons
+              name="sparkles"
+              size={24}
+              color={theme.iconColorFocused}
+            />
+          </View>
+
+          {/* Search Bar */}
+          <View
+            style={[
+              styles.searchBarContainer,
+              { backgroundColor: theme.navBackground },
+            ]}
+          >
+            <Ionicons
+              name="search"
+              size={18}
+              color={theme.subtext}
+              style={styles.searchIcon}
+            />
+            <TextInput
+              placeholder="Name or Pokedex #"
+              placeholderTextColor={theme.subtext}
+              value={query}
+              style={[styles.searchInput, { color: theme.text }]}
+              onChangeText={setQuery}
+              onSubmitEditing={handleSearch}
+              autoCapitalize="none"
+              returnKeyType="search"
+              selectionColor={selectionColor}
+            />
+            {query.length > 0 && (
+              <Pressable onPress={handleClearSearch} style={styles.clearButton}>
+                <Ionicons
+                  name="close-circle-outline"
+                  size={18}
+                  color={theme.subtext}
+                />
+              </Pressable>
+            )}
+          </View>
+
+          {/* Search Button */}
+          <Pressable
+            style={[
+              styles.searchButton,
+              { backgroundColor: theme.iconColorFocused },
+            ]}
+            onPress={handleSearch}
+          >
+            <Ionicons name="search" size={18} color={theme.text} />
+            <Text style={[styles.searchButtonText, { color: theme.text }]}>
+              Search
+            </Text>
+          </Pressable>
+
+          {/* Info Section */}
+          <View style={styles.infoSection}>
+            <View
+              style={[styles.infoBox, { backgroundColor: theme.navBackground }]}
+            >
+              <Ionicons
+                name="information-circle"
+                size={24}
+                color={theme.iconColorFocused}
+              />
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                Search by Pokémon name or National Pokédex number
+              </Text>
+            </View>
+          </View>
+
+          {/* Examples */}
+          <View style={styles.examplesSection}>
+            <Text style={[styles.examplesTitle, { color: theme.text }]}>
+              Examples
+            </Text>
+            <View style={styles.examplesGrid}>
+              {["pikachu", "25", "charizard", "6"].map((example) => (
+                <Pressable
+                  key={example}
+                  style={[
+                    styles.exampleButton,
+                    { backgroundColor: theme.navBackground },
+                  ]}
+                  onPress={() => {
+                    setQuery(example);
+                    setSelectedName(example);
+                  }}
+                >
+                  <Text
+                    style={[styles.exampleButtonText, { color: theme.text }]}
+                  >
+                    {example}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+          </View>
+        </ScrollView>
+      ) : (
+        // Pokemon Results View
+        <ScrollView
+          keyboardDismissMode="on-drag"
+          contentContainerStyle={{
+            gap: 16,
+            padding: 16,
+            paddingBottom: 16 + bottomBarTabHeight,
+          }}
+        >
+          {/* Header with Back Button */}
+          <View style={styles.resultHeader}>
+            <Pressable onPress={handleNewSearch} style={styles.backButton}>
+              <Ionicons
+                name="chevron-back"
+                size={24}
+                color={theme.iconColorFocused}
+              />
+              <Text
+                style={[
+                  styles.backButtonText,
+                  { color: theme.iconColorFocused },
+                ]}
+              >
+                Back
+              </Text>
+            </Pressable>
+            {isSearching && (
+              <Ionicons name="hourglass" size={20} color={theme.subtext} />
+            )}
+          </View>
+
+          {/* New Search Bar */}
+          <View
+            style={[
+              styles.searchBarContainer,
+              { backgroundColor: theme.navBackground },
+            ]}
+          >
+            <Ionicons
+              name="search"
+              size={18}
+              color={theme.subtext}
+              style={styles.searchIcon}
+            />
+            <TextInput
+              placeholder="Search another..."
+              placeholderTextColor={theme.subtext}
+              value={query}
+              style={[styles.searchInput, { color: theme.text }]}
+              onChangeText={setQuery}
+              onSubmitEditing={handleSearch}
+              autoCapitalize="none"
+              returnKeyType="search"
+              selectionColor={selectionColor}
+            />
+            {query.length > 0 && (
+              <Pressable onPress={handleClearSearch} style={styles.clearButton}>
+                <Ionicons
+                  name="close-circle-outline"
+                  size={18}
+                  color={theme.subtext}
+                />
+              </Pressable>
+            )}
+          </View>
+
+          {query.length > 0 && (
+            <Pressable
+              style={[
+                styles.searchButton,
+                { backgroundColor: theme.butt },
+              ]}
+              onPress={handleSearch}
+            >
+              <Ionicons name="search" size={18} color={theme.text} />
+              <Text style={[styles.searchButtonText, { color: theme.text }]}>
+                Search
+              </Text>
+            </Pressable>
+          )}
+
+          {/* Pokemon Card */}
+          <Link
+            key={selectedPokemon.name}
+            href={{
+              pathname: "/statistics",
+              params: { name: selectedPokemon.name },
+            }}
+            style={[
+              styles.pokemonCard,
+              {
+                backgroundColor:
+                  bgColourByType[selectedPokemon.types[0].type.name] + 70,
+              },
+            ]}
+          >
+            <View style={styles.pokemonCardContent}>
+              {/* Pokemon Name */}
+              <View style={styles.nameSection}>
+                <Text style={[styles.pokemonName, { color: theme.title }]}>
+                  {selectedPokemon.name.toLocaleUpperCase()}
+                </Text>
+                <Ionicons name="arrow-forward" size={20} color={theme.title} />
+              </View>
+
+              {/* Types */}
+              <View style={styles.typesRow}>
+                {selectedPokemon.types.map((type) => (
+                  <View
+                    key={selectedPokemon.name + type.type.name}
+                    style={[
+                      styles.typeTag,
+                      { backgroundColor: "rgba(255,255,255,0.3)" },
+                    ]}
+                  >
+                    <Text style={[styles.typeText, { color: theme.subtext }]}>
+                      {type.type.name}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+
+              {/* Pokemon Image */}
+              <Image
+                source={{ uri: selectedPokemon.imageFrontLink }}
+                style={styles.pokemonImage}
+              />
+            </View>
+
+            {/* Tap Indicator */}
+            <View style={styles.tapIndicator}>
+              <Ionicons name="finger-print" size={16} color={theme.title} />
+              <Text style={[styles.tapText, { color: theme.title }]}>
+                Tap for details
+              </Text>
+            </View>
+          </Link>
+        </ScrollView>
+      )}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
