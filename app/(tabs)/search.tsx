@@ -1,7 +1,20 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
-import { Alert, Button, Image, Platform, ScrollView, StyleSheet, Text, TextInput, ToastAndroid, useColorScheme, View } from "react-native";
+import {
+  Alert,
+  Image,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  ToastAndroid,
+  useColorScheme,
+  View,
+  Pressable,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
 
 interface Pokemon {
@@ -14,7 +27,7 @@ interface PokemonTypeObject {
   type: {
     name: string;
     url: string;
-  }
+  };
 }
 
 const bgColourByType: Record<string, string> = {
@@ -35,57 +48,61 @@ const bgColourByType: Record<string, string> = {
   dragon: "#A78BFF",
   dark: "#BFA88F",
   steel: "#D6D6E0",
-  fairy: "#F4B6D9"
-}
+  fairy: "#F4B6D9",
+};
 
 export default function Search() {
-    const bottomBarTabHeight = useBottomTabBarHeight();
+  const bottomBarTabHeight = useBottomTabBarHeight();
 
-    const [query, setQuery] = useState<string>(""); // user input field
-    const [selectedName, setSelectedName] = useState<string | null>(null); // becomes non-null after submitting an answer
-    const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
+  const [query, setQuery] = useState<string>("");
+  const [selectedName, setSelectedName] = useState<string | null>(null);
+  const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
+  const [isSearching, setIsSearching] = useState<boolean>(false);
 
-    // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
-    const colourScheme = useColorScheme() ?? 'light'
-    const theme = Colours[colourScheme]
+  const colourScheme = useColorScheme() ?? "light";
+  const theme = Colours[colourScheme];
 
-    useEffect(() => { searchPokemon() }, [selectedName])
+  useEffect(() => {
+    searchPokemon();
+  }, [selectedName]);
 
-    async function searchPokemon() {
-        try {
-            if (selectedName) {
-                // fetch takes URL and receives a response
-                const unformattedResponse = await fetch("https://pokeapi.co/api/v2/pokemon/" + selectedName);
-                
-                // handle non-2xx responses before attempting to parse JSON
-                if (!unformattedResponse.ok) {
-                const bodyText = await unformattedResponse.text();
-                const errString = `The Pokémon you have searched for caused an error: ${bodyText.toUpperCase()}.`;
-                // show error message to user
-                Platform.OS === 'android'
-                    ? ToastAndroid.show(errString, ToastAndroid.SHORT)
-                    : Alert.alert('Error', errString);
-                // show error in console
-                throw new Error(bodyText || `Request failed with status ${unformattedResponse.status}`);
-                }
-                
-                // format to json
-                const jsonData = await unformattedResponse.json();
+  async function searchPokemon() {
+    try {
+      if (selectedName) {
+        setIsSearching(true);
+        const unformattedResponse = await fetch(
+          "https://pokeapi.co/api/v2/pokemon/" + selectedName,
+        );
 
-                const mapJsonToPokemon: Pokemon = {
-                name: jsonData.name,
-                imageFrontLink: jsonData.sprites.front_default,
-                types: jsonData.types,
-                };
-
-                setPokemon(mapJsonToPokemon);
-                setPokemon(mapJsonToPokemon)
-            }
+        if (!unformattedResponse.ok) {
+          const bodyText = await unformattedResponse.text();
+          const errString = `Pokémon not found`;
+          Platform.OS === "android"
+            ? ToastAndroid.show(errString, ToastAndroid.SHORT)
+            : Alert.alert("Error", errString);
+          setIsSearching(false);
+          throw new Error(
+            bodyText ||
+              `Request failed with status ${unformattedResponse.status}`,
+          );
         }
-        catch (e) {
-            console.log(e)
-        }
+
+        const jsonData = await unformattedResponse.json();
+
+        const mapJsonToPokemon: Pokemon = {
+          name: jsonData.name,
+          imageFrontLink: jsonData.sprites.front_default,
+          types: jsonData.types,
+        };
+
+        setPokemon(mapJsonToPokemon);
+        setIsSearching(false);
+      }
+    } catch (e) {
+      setIsSearching(false);
+      console.log(e);
     }
+  }
 
   const handleSearch = () => {
     if (!query.trim()) return;
@@ -124,7 +141,7 @@ export default function Search() {
               Search Pokémon
             </Text>
             <Ionicons
-              name="sparkles"
+              name="globe-outline"
               size={24}
               color={theme.iconColorFocused}
             />
@@ -169,7 +186,7 @@ export default function Search() {
           <Pressable
             style={[
               styles.searchButton,
-              { backgroundColor: theme.iconColorFocused },
+              { backgroundColor: theme.buttonBackground },
             ]}
             onPress={handleSearch}
           >
@@ -185,7 +202,7 @@ export default function Search() {
               style={[styles.infoBox, { backgroundColor: theme.navBackground }]}
             >
               <Ionicons
-                name="information-circle"
+                name="information-circle-outline"
                 size={24}
                 color={theme.iconColorFocused}
               />
@@ -294,7 +311,7 @@ export default function Search() {
             <Pressable
               style={[
                 styles.searchButton,
-                { backgroundColor: theme.butt },
+                { backgroundColor: theme.buttonBackground },
               ]}
               onPress={handleSearch}
             >
@@ -355,7 +372,11 @@ export default function Search() {
 
             {/* Tap Indicator */}
             <View style={styles.tapIndicator}>
-              <Ionicons name="finger-print" size={16} color={theme.title} />
+              <Ionicons
+                name="document-text-outline"
+                size={16}
+                color={theme.title}
+              />
               <Text style={[styles.tapText, { color: theme.title }]}>
                 Tap for details
               </Text>
@@ -368,56 +389,178 @@ export default function Search() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        alignItems: "center", 
-        width: "100%",
-        gap: 8
-    },
+  header: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 8,
+  },
 
-    cardLayout: {
-        padding: 25,
-        borderRadius: 20,
-    },
+  title: {
+    fontSize: 32,
+    fontWeight: "700",
+  },
 
-    typesRow: {
-        flexDirection: "row",
-        justifyContent: "center",
-        gap: 10
-    },
+  searchBarContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 12,
+    borderRadius: 10,
+    height: 44,
+  },
 
-    type: {
-        fontSize: 20,
-        fontStyle: 'italic',
-        color: 'grey',
-    },
+  searchIcon: {
+    marginRight: 8,
+  },
 
-    cardContent: {
-        width: "100%", // needed to allow centring to take up full width and actually be centred
-        alignItems: "center", // center content horizontally and vertically inside each card
-    },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    height: 44,
+  },
 
-    question: {
-        fontSize: 20,
-        fontWeight: 'bold'
-    },
+  clearButton: {
+    padding: 6,
+    marginLeft: 4,
+  },
 
-    smallQuestion: {
-        fontSize: 15,
-        fontWeight: 'bold'
-    },
+  searchButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 10,
+    gap: 8,
+  },
 
-    smallText: {
-        fontSize: 15,
-    },
+  searchButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
 
-    name: {
-        fontSize: 40,
-        fontWeight: 'bold'
-    },
+  infoSection: {
+    marginVertical: 8,
+  },
 
-    imagesRow: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
-    },
-})
+  infoBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 12,
+    borderRadius: 10,
+    gap: 12,
+  },
+
+  infoText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "500",
+  },
+
+  examplesSection: {
+    gap: 12,
+  },
+
+  examplesTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+
+  examplesGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+  },
+
+  exampleButton: {
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    borderRadius: 8,
+    flex: 1,
+    minWidth: "45%",
+    alignItems: "center",
+  },
+
+  exampleButtonText: {
+    fontSize: 14,
+    fontWeight: "500",
+  },
+
+  resultHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+
+  backButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+  },
+
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: "500",
+  },
+
+  pokemonCard: {
+    borderRadius: 16,
+    padding: 20,
+    gap: 16,
+  },
+
+  pokemonCardContent: {
+    gap: 12,
+  },
+
+  nameSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+
+  pokemonName: {
+    fontSize: 36,
+    fontWeight: "700",
+  },
+
+  typesRow: {
+    flexDirection: "row",
+    gap: 8,
+  },
+
+  typeTag: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+
+  typeText: {
+    fontSize: 12,
+    fontWeight: "600",
+    textTransform: "capitalize",
+  },
+
+  pokemonImage: {
+    width: 160,
+    height: 160,
+    alignSelf: "center",
+    marginVertical: 8,
+  },
+
+  tapIndicator: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: "rgba(255,255,255,0.3)",
+  },
+
+  tapText: {
+    fontSize: 12,
+    fontWeight: "500",
+  },
+});
