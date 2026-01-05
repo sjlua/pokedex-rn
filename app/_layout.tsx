@@ -1,3 +1,4 @@
+import { isLiquidGlassAvailable } from 'expo-glass-effect';
 import { Stack } from 'expo-router';
 import { useColorScheme } from 'react-native';
 import { Colours } from "../constants/colours";
@@ -19,10 +20,10 @@ export default function RootLayout() {
         name="statistics"
         options={{
           title: 'Statistics',
-          presentation: 'modal', // Use presentation directly here
+          presentation: 'formSheet', // Use presentation directly here
           headerTintColor: theme.title,
           headerStyle: {backgroundColor: theme.navBackground},
-          contentStyle: {backgroundColor: theme.background}
+          contentStyle: {backgroundColor: isLiquidGlassAvailable() ? "transparent" : "theme.background"}
         }}
       />
     </Stack>
