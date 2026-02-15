@@ -126,121 +126,121 @@ export default function Collection() {
   return (
     // replaces standard unscrollable view with scrollable
     <SafeAreaProvider>
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: theme.background }}>
         <FlatList
-          data={listPokemon}
-          numColumns={3}
-          style={{
-            paddingHorizontal: 10,
-            backgroundColor: theme.background,
-          }}
-          contentContainerStyle={{ gap: 10, margin: 10 }}
-          columnWrapperStyle={{
-            gap: 10,
-            justifyContent: "center",
-            width: "100%",
-          }}
-          ListHeaderComponent={
-            <>
-              <View
-                style={[
-                  styles.questionRow,
-                  { backgroundColor: theme.background },
-                ]}
-              >
-                <Text style={[styles.question, { color: theme.text }]}>
-                  {"Fly to another region?"}
-                </Text>
-                <Button
-                  title={viewRegionPicker ? "Close" : "Select"}
-                  color={
-                    Platform.OS === "ios"
-                      ? theme.iconColorFocused
-                      : theme.buttonBackground
-                  }
-                  onPress={() => showRegionPicker()}
-                />
-              </View>
-
-              {viewRegionPicker ? (
-                <View style={{ backgroundColor: theme.background }}>
-                  <Text style={[styles.smallQuestion, { color: theme.text }]}>
-                    {
-                      "By flying to another region, you can see all the Pokémon in that region, and beyond."
-                    }
-                  </Text>
-                  <Picker
-                    style={{ color: theme.text }}
-                    selectedValue={selectedRegion}
-                    onValueChange={(itemValue, _) => {
-                      setRegion(itemValue);
-                      setCurrentPage(0);
-                    }}
-                  >
-                    <Picker.Item label="Kanto" value="0" />
-                    <Picker.Item label="Johto" value="151" />
-                    <Picker.Item label="Hoenn" value="251" />
-                    <Picker.Item label="Sinnoh" value="386" />
-                    <Picker.Item label="Unova" value="493" />
-                    <Picker.Item label="Kalos" value="649" />
-                    <Picker.Item label="Alola" value="721" />
-                    <Picker.Item label="Galar" value="809" />
-                    <Picker.Item label="Paldea" value="905" />
-                  </Picker>
-                </View>
-              ) : null}
-            </>
-          }
-          onEndReached={loadMorePokemon}
-          onEndReachedThreshold={0.2}
-          renderItem={({ item }) => (
-            <Link
-              key={item.name}
-              href={{ pathname: "/statistics", params: { name: item.name } }}
+        data={listPokemon}
+        numColumns={3}
+        style={{
+          paddingHorizontal: 10,
+          backgroundColor: theme.background,
+        }}
+        contentContainerStyle={{ gap: 10, margin: 10 }}
+        columnWrapperStyle={{
+          gap: 10,
+          justifyContent: "center",
+          width: "100%",
+        }}
+        ListHeaderComponent={
+          <>
+            <View
               style={[
-                styles.cardLayout,
-                {
-                  // + 70 makes the opacity 70%
-                  // ignore type warning
-                  // @ts-ignore
-                  backgroundColor: bgColourByType[item.types[0].type.name] + 70,
-                },
+                styles.questionRow,
+                { backgroundColor: theme.background },
               ]}
             >
-              {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
-              <View style={styles.cardContent}>
-                {/* Name */}
-                <Text
-                  key={item.name}
-                  style={[styles.name, { color: theme.title }]}
-                >
-                  {item.name.toUpperCase()}
+              <Text style={[styles.question, { color: theme.text }]}>
+                {"Fly to another region?"}
+              </Text>
+              <Button
+                title={viewRegionPicker ? "Close" : "Select"}
+                color={
+                  Platform.OS === "ios"
+                    ? theme.iconColorFocused
+                    : theme.buttonBackground
+                }
+                onPress={() => showRegionPicker()}
+              />
+            </View>
+
+            {viewRegionPicker ? (
+              <View style={{ backgroundColor: theme.background }}>
+                <Text style={[styles.smallQuestion, { color: theme.text }]}>
+                  {
+                    "By flying to another region, you can see all the Pokémon in that region, and beyond."
+                  }
                 </Text>
-
-                {/* Types */}
-                <View style={styles.typesRow}>
-                  {item.types.map((type) => (
-                    <Text
-                      key={item.name + type.type.name}
-                      style={[styles.type, { color: theme.subtext }]}
-                    >
-                      {type.type.name}
-                    </Text>
-                  ))}
-                </View>
-
-                {/* Sprites */}
-                <View style={styles.imagesRow}>
-                  <Image
-                    source={{ uri: item.imageFrontLink }}
-                    style={{ width: 150, height: 130 }}
-                  />
-                </View>
+                <Picker
+                  style={{ color: theme.text }}
+                  selectedValue={selectedRegion}
+                  onValueChange={(itemValue, _) => {
+                    setRegion(itemValue);
+                    setCurrentPage(0);
+                  }}
+                >
+                  <Picker.Item label="Kanto" value="0" />
+                  <Picker.Item label="Johto" value="151" />
+                  <Picker.Item label="Hoenn" value="251" />
+                  <Picker.Item label="Sinnoh" value="386" />
+                  <Picker.Item label="Unova" value="493" />
+                  <Picker.Item label="Kalos" value="649" />
+                  <Picker.Item label="Alola" value="721" />
+                  <Picker.Item label="Galar" value="809" />
+                  <Picker.Item label="Paldea" value="905" />
+                </Picker>
               </View>
-            </Link>
-          )}
-          keyExtractor={(item) => item.name}
-        />
+            ) : null}
+          </>
+        }
+        onEndReached={loadMorePokemon}
+        onEndReachedThreshold={0.2}
+        renderItem={({ item }) => (
+          <Link
+            key={item.name}
+            href={{ pathname: "/statistics", params: { name: item.name } }}
+            style={[
+              styles.cardLayout,
+              {
+                // + 70 makes the opacity 70%
+                // ignore type warning
+                // @ts-ignore
+                backgroundColor: bgColourByType[item.types[0].type.name] + 70,
+              },
+            ]}
+          >
+            {/* for each pokemon, create a View with the key of pokemon.name, containing it's name ... */}
+            <View style={styles.cardContent}>
+              {/* Name */}
+              <Text
+                key={item.name}
+                style={[styles.name, { color: theme.title }]}
+              >
+                {item.name.toUpperCase()}
+              </Text>
+
+              {/* Types */}
+              <View style={styles.typesRow}>
+                {item.types.map((type) => (
+                  <Text
+                    key={item.name + type.type.name}
+                    style={[styles.type, { color: theme.subtext }]}
+                  >
+                    {type.type.name}
+                  </Text>
+                ))}
+              </View>
+
+              {/* Sprites */}
+              <View style={styles.imagesRow}>
+                <Image
+                  source={{ uri: item.imageFrontLink }}
+                  style={{ width: 150, height: 130 }}
+                />
+              </View>
+            </View>
+          </Link>
+        )}
+        keyExtractor={(item) => item.name}
+      />
       </SafeAreaView>
     </SafeAreaProvider>
   );

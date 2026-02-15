@@ -6,34 +6,41 @@ import { Colours } from "../../constants/colours";
 
 export default function TabsLayout() {
   // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
-  const colourScheme = useColorScheme() ?? 'light'
-  const theme = Colours[colourScheme]
+  const colourScheme = useColorScheme() ?? "light";
+  const theme = Colours[colourScheme];
 
   return (
-    <Tabs screenOptions={{ 
-      headerStyle: { backgroundColor: theme.navBackground },
-      headerTintColor: theme.title,
-      tabBarActiveTintColor: theme.iconColorFocused,
-      tabBarInactiveTintColor: theme.iconColor,
-      tabBarStyle: { position: 'absolute' },
+    <Tabs
+      screenOptions={{
+        headerStyle: { backgroundColor: theme.navBackground },
+        headerTintColor: theme.title,
+        tabBarActiveTintColor: theme.iconColorFocused,
+        tabBarInactiveTintColor: theme.iconColor,
+        tabBarStyle: { position: "absolute" },
 
-      tabBarBackground: () => (
-        // see https://docs.expo.dev/versions/latest/sdk/blur-view/#experimentalblurmethod
-        // on why experimentalBlurMethod="dimezisBlurView" is used
-        <BlurView tint="prominent" intensity={80} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" />
-      ),
-      // EXPERIMENTAL
-      // headerBackground: () => (
-      //     <BlurView tint="prominent" intensity={80} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" />
-      //   )
-      }}>
+        tabBarBackground: () => (
+          // see https://docs.expo.dev/versions/latest/sdk/blur-view/#experimentalblurmethod
+          // on why experimentalBlurMethod="dimezisBlurView" is used
+          <BlurView
+            tint="prominent"
+            intensity={80}
+            style={StyleSheet.absoluteFill}
+            experimentalBlurMethod="dimezisBlurView"
+          />
+        ),
+        // EXPERIMENTAL
+        // headerBackground: () => (
+        //     <BlurView tint="prominent" intensity={80} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" />
+        //   )
+      }}
+    >
       <Tabs.Screen
         name="index"
         options={{
-          title: "Dex",
+          title: "Dexern",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="pokeball" size={size} color={color} />
-          )
+          ),
         }}
       />
 
@@ -43,7 +50,7 @@ export default function TabsLayout() {
           title: "Search",
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="search" size={size} color={color} />
-          )
+          ),
         }}
       />
 
@@ -53,7 +60,7 @@ export default function TabsLayout() {
           title: "My Partner",
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="favorite-border" size={size} color={color} />
-          )
+          ),
         }}
       />
 
@@ -63,7 +70,7 @@ export default function TabsLayout() {
           title: "App Info",
           tabBarIcon: ({ color, size }) => (
             <MaterialIcons name="info-outline" size={size} color={color} />
-          )
+          ),
         }}
       />
     </Tabs>
