@@ -5,7 +5,7 @@ All Pokémon names and references used belong to Nintendo and The Pokémon Compa
 
 ## Future features
 - [x] Light/dark mode support.
-- [ ] Storing partner Pokemon locally to your device.
+- [x] Storing partner Pokemon locally to your device.
 - [x] Add more statistics to the Statistics page (e.g., total weight, height, etc.).
 - [ ] Add Moves to the Statistics page.
 - [ ] Add logo.

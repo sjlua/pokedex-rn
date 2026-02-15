@@ -14,6 +14,7 @@ import {
   View,
   Pressable,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
 
@@ -53,6 +54,11 @@ const bgColourByType: Record<string, string> = {
   fairy: "#F4B6D9",
 };
 
+const STORAGE_KEYS = {
+  PARTNER_POKEMON: "@partner_pokemon",
+  SHINY_PREFERENCE: "@shiny_preference",
+};
+
 export default function PartnerPokemon() {
   const bottomBarTabHeight = useBottomTabBarHeight();
 
@@ -65,9 +71,71 @@ export default function PartnerPokemon() {
   const colourScheme = useColorScheme() ?? "light";
   const theme = Colours[colourScheme];
 
+  // Load saved partner Pokemon on mount
+  useEffect(() => {
+    loadSavedPartner();
+  }, []);
+
+  // Fetch new Pokemon when selectedName changes
   useEffect(() => {
     getFavouritePokemonStats();
   }, [selectedName]);
+
+  // Save partner Pokemon whenever it changes
+  useEffect(() => {
+    if (favouriteMon) {
+      saveFavouriteMon(favouriteMon);
+    }
+  }, [favouriteMon]);
+
+  // Save shiny preference whenever it changes
+  useEffect(() => {
+    saveShinyPreference(boolShowShiny);
+  }, [boolShowShiny]);
+
+  async function loadSavedPartner() {
+    try {
+      const savedPokemon = await AsyncStorage.getItem(
+        STORAGE_KEYS.PARTNER_POKEMON,
+      );
+      const savedShiny = await AsyncStorage.getItem(
+        STORAGE_KEYS.SHINY_PREFERENCE,
+      );
+
+      if (savedPokemon) {
+        const pokemon: Pokemon = JSON.parse(savedPokemon);
+        setFavouriteMon(pokemon);
+      }
+
+      if (savedShiny !== null) {
+        setShowStatus(savedShiny === "true");
+      }
+    } catch (e) {
+      console.log("Error loading saved partner:", e);
+    }
+  }
+
+  async function saveFavouriteMon(pokemon: Pokemon) {
+    try {
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.PARTNER_POKEMON,
+        JSON.stringify(pokemon),
+      );
+    } catch (e) {
+      console.log("Error saving partner:", e);
+    }
+  }
+
+  async function saveShinyPreference(isShiny: boolean) {
+    try {
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.SHINY_PREFERENCE,
+        isShiny.toString(),
+      );
+    } catch (e) {
+      console.log("Error saving shiny preference:", e);
+    }
+  }
 
   async function getFavouritePokemonStats() {
     try {
@@ -121,10 +189,16 @@ export default function PartnerPokemon() {
     setQuery("");
   };
 
-  const handleNewPartner = () => {
+  const handleNewPartner = async () => {
     setFavouriteMon(null);
     setSelectedName(null);
     setQuery("");
+    // Clear saved partner from storage
+    try {
+      await AsyncStorage.removeItem(STORAGE_KEYS.PARTNER_POKEMON);
+    } catch (e) {
+      console.log("Error clearing saved partner:", e);
+    }
   };
 
   return (
@@ -276,73 +350,6 @@ export default function PartnerPokemon() {
             )}
           </View>
 
-          {/* Change Partner Section Header */}
-          <View style={styles.changeSection}>
-            <View style={styles.changeSectionHeader}>
-              <Ionicons
-                name="swap-vertical"
-                size={20}
-                color={theme.iconColorFocused}
-              />
-              <Text style={[styles.changeTitle, { color: theme.title }]}>
-                Change Your Partner
-              </Text>
-            </View>
-            <Text style={[styles.changeSubtitle, { color: theme.subtext }]}>
-              Select a different Pokémon to be your new partner
-            </Text>
-          </View>
-
-          {/* Change Partner Search Bar */}
-          <View
-            style={[
-              styles.searchBarContainer,
-              { backgroundColor: theme.navBackground },
-            ]}
-          >
-            <Ionicons
-              name="search"
-              size={18}
-              color={theme.subtext}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              placeholder="Choose another..."
-              placeholderTextColor={theme.subtext}
-              value={query}
-              style={[styles.searchInput, { color: theme.text }]}
-              onChangeText={setQuery}
-              onSubmitEditing={handleSearch}
-              autoCapitalize="none"
-              returnKeyType="search"
-              selectionColor={theme.selectionColour}
-            />
-            {query.length > 0 && (
-              <Pressable onPress={handleClearSearch} style={styles.clearButton}>
-                <Ionicons
-                  name="close-circle-outline"
-                  size={18}
-                  color={theme.subtext}
-                />
-              </Pressable>
-            )}
-          </View>
-
-          {query.length > 0 && (
-            <Pressable
-              style={[
-                styles.searchButton,
-                { backgroundColor: theme.buttonBackground },
-              ]}
-              onPress={handleSearch}
-            >
-              <Ionicons name="search" size={18} color={theme.text} />
-              <Text style={[styles.searchButtonText, { color: theme.text }]}>
-                Change Partner
-              </Text>
-            </Pressable>
-          )}
-
           {/* Partner Pokemon Card */}
           <View
             style={[
@@ -424,6 +431,73 @@ export default function PartnerPokemon() {
               </View>
             </View>
           </View>
+
+          {/* Change Partner Section Header */}
+          <View style={styles.changeSection}>
+            <View style={styles.changeSectionHeader}>
+              <Ionicons
+                name="swap-vertical"
+                size={20}
+                color={theme.iconColorFocused}
+              />
+              <Text style={[styles.changeTitle, { color: theme.title }]}>
+                Change Your Partner
+              </Text>
+            </View>
+            <Text style={[styles.changeSubtitle, { color: theme.subtext }]}>
+              Select a different Pokémon to be your new partner
+            </Text>
+          </View>
+
+          {/* Change Partner Search Bar */}
+          <View
+            style={[
+              styles.searchBarContainer,
+              { backgroundColor: theme.navBackground },
+            ]}
+          >
+            <Ionicons
+              name="search"
+              size={18}
+              color={theme.subtext}
+              style={styles.searchIcon}
+            />
+            <TextInput
+              placeholder="Choose another..."
+              placeholderTextColor={theme.subtext}
+              value={query}
+              style={[styles.searchInput, { color: theme.text }]}
+              onChangeText={setQuery}
+              onSubmitEditing={handleSearch}
+              autoCapitalize="none"
+              returnKeyType="search"
+              selectionColor={theme.selectionColour}
+            />
+            {query.length > 0 && (
+              <Pressable onPress={handleClearSearch} style={styles.clearButton}>
+                <Ionicons
+                  name="close-circle-outline"
+                  size={18}
+                  color={theme.subtext}
+                />
+              </Pressable>
+            )}
+          </View>
+
+          {query.length > 0 && (
+            <Pressable
+              style={[
+                styles.searchButton,
+                { backgroundColor: theme.buttonBackground },
+              ]}
+              onPress={handleSearch}
+            >
+              <Ionicons name="search" size={18} color={theme.text} />
+              <Text style={[styles.searchButtonText, { color: theme.text }]}>
+                Change Partner
+              </Text>
+            </Pressable>
+          )}
         </ScrollView>
       )}
     </View>
