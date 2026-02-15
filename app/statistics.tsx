@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
+  Animated,
   Button,
   Image,
   Linking,
@@ -102,10 +103,24 @@ export default function Statistics() {
   // A tuple. The array simply destructures it and gives it proper naming, rather than tuple[0], or tuple[1]
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
 
+  // Animation values for web
+  const [slideAnim] = useState(new Animated.Value(50));
+
   // Fetches Pokemon data on load
   useEffect(() => {
     fetchPokemonByName(params.name);
   }, [params.name]);
+
+  // Animate on mount (web only)
+  useEffect(() => {
+    if (Platform.OS === "web") {
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 400,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, []);
 
   // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
   const colourScheme = useColorScheme() ?? "light";
@@ -149,8 +164,9 @@ export default function Statistics() {
     }
   }
   // replaces standard unscrollable view with scrollable
-  return (
+  const scrollViewContent = (
     <ScrollView
+      style={{ backgroundColor: theme.background }}
       contentContainerStyle={[
         styles.container,
         pokemon
@@ -318,6 +334,25 @@ export default function Statistics() {
       )}
     </ScrollView>
   );
+
+  // Wrap with animation on web
+  if (Platform.OS === "web") {
+    return (
+      <Animated.View
+        style={{
+          flex: 1,
+          backgroundColor: theme.background,
+          transform: [{ translateY: slideAnim }],
+        }}
+      >
+        <View style={{ flex: 1, backgroundColor: theme.background }}>
+          {scrollViewContent}
+        </View>
+      </Animated.View>
+    );
+  }
+
+  return scrollViewContent;
 }
 
 const styles = StyleSheet.create({

@@ -28,7 +28,7 @@ export default function Info() {
         backgroundColor: theme.background,
       }}
     >
-      <Text style={{ fontSize: 28, color: theme.text }}>
+      <Text style={{ fontSize: 20, color: theme.text }}>
         {`This is a test project made by me to learn React, React Native and Expo.\n\nHuge thanks to pokeapi.co, without them, this wouldn't be possible at all.`}
       </Text>
       <Button
