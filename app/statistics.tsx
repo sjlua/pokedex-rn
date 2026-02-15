@@ -70,6 +70,27 @@ const bgColourByType: Record<string, string> = {
   fairy: "#F4B6D9",
 };
 
+const bgColourByTypeDark: Record<string, string> = {
+  normal: "#5C5947",
+  fire: "#8B5A3C",
+  water: "#3D6B8F",
+  electric: "#8B7B3D",
+  grass: "#4B7A45",
+  ice: "#5B7A7F",
+  fighting: "#7A4A3D",
+  poison: "#6B4F7A",
+  ground: "#7A6B45",
+  flying: "#6B5B8F",
+  psychic: "#8F4B5B",
+  bug: "#6B7A45",
+  rock: "#7A6B47",
+  ghost: "#6B5F7F",
+  dragon: "#5B4B8F",
+  dark: "#6B5A4B",
+  steel: "#6B6B7A",
+  fairy: "#8F5B75",
+};
+
 export default function Statistics() {
   // Get the string of the pokemon name from the URL params
   const params = useLocalSearchParams<{ name: string }>();
@@ -134,7 +155,9 @@ export default function Statistics() {
         pokemon
           ? {
               backgroundColor:
-                bgColourByType[pokemon.types[0].type.name] + "70",
+                colourScheme === "dark"
+                  ? bgColourByTypeDark[pokemon.types[0].type.name]
+                  : bgColourByType[pokemon.types[0].type.name] + "70",
             }
           : {},
         { paddingBottom: insets.bottom + 64 },
@@ -165,7 +188,16 @@ export default function Statistics() {
               {pokemon.types.map((type) => (
                 <Text
                   key={pokemon.name + type.type.name}
-                  style={[styles.type, { color: theme.subtext }]}
+                  style={[
+                    styles.type,
+                    {
+                      color: theme.subtext,
+                      backgroundColor:
+                        colourScheme === "dark"
+                          ? "rgba(0,0,0,0.3)"
+                          : "rgba(255,255,255,0.3)",
+                    },
+                  ]}
                 >
                   {type.type.name}
                 </Text>
@@ -214,7 +246,17 @@ export default function Statistics() {
               <Text style={[styles.statLabel, { color: theme.text }]}>
                 {stat.label}
               </Text>
-              <View style={styles.statBarContainer}>
+              <View
+                style={[
+                  styles.statBarContainer,
+                  {
+                    backgroundColor:
+                      colourScheme === "dark"
+                        ? "rgba(255,255,255,0.1)"
+                        : "rgba(0,0,0,0.1)",
+                  },
+                ]}
+              >
                 <View
                   style={[
                     styles.statBar,
@@ -243,7 +285,17 @@ export default function Statistics() {
             ))}
           </View>
 
-          <View style={styles.buttonWrap}>
+          <View
+            style={[
+              styles.buttonWrap,
+              {
+                backgroundColor:
+                  colourScheme === "dark"
+                    ? "rgba(0,0,0,0.3)"
+                    : "rgba(255,255,255,0.3)",
+              },
+            ]}
+          >
             <Button
               key={pokemon.pokedex}
               title="More stats on PokemonDB"
@@ -287,11 +339,9 @@ const styles = StyleSheet.create({
   type: {
     fontSize: 18,
     fontStyle: "italic",
-    color: "grey",
     paddingHorizontal: 8,
     paddingVertical: 6,
     borderRadius: 8,
-    backgroundColor: "rgba(255,255,255,0.2)",
   },
 
   typesRow: {
@@ -329,7 +379,6 @@ const styles = StyleSheet.create({
   },
 
   buttonWrap: {
-    backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 40,
     padding: 8,
     alignItems: "center",
@@ -351,7 +400,6 @@ const styles = StyleSheet.create({
   statBarContainer: {
     flex: 1,
     height: 20,
-    backgroundColor: "rgba(0,0,0,0.1)",
     borderRadius: 4,
     overflow: "hidden",
   },
