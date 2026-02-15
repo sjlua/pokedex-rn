@@ -80,9 +80,11 @@ export default function PartnerPokemon() {
         if (!unformattedResponse.ok) {
           const bodyText = await unformattedResponse.text();
           const errString = `Pokémon not found`;
-          Platform.OS === "android"
-            ? ToastAndroid.show(errString, ToastAndroid.SHORT)
-            : Alert.alert("Error", errString);
+          if (Platform.OS === "android") {
+            ToastAndroid.show(errString, ToastAndroid.SHORT);
+          } else {
+            Alert.alert("Error", errString);
+          }
           setIsLoading(false);
           throw new Error(
             bodyText ||

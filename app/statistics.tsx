@@ -6,6 +6,7 @@ import {
   Button,
   Image,
   Linking,
+  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -299,7 +300,11 @@ export default function Statistics() {
             <Button
               key={pokemon.pokedex}
               title="More stats on PokemonDB"
-              color={theme.iconColorFocused}
+              color={
+                Platform.OS === "ios"
+                  ? theme.iconColorFocused
+                  : theme.buttonBackground
+              }
               accessibilityLabel="View more on Pokemon DB"
               onPress={() => {
                 const url = `https://pokemondb.net/pokedex/${pokemon.name}`;

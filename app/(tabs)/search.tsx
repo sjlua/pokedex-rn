@@ -77,9 +77,11 @@ export default function Search() {
         if (!unformattedResponse.ok) {
           const bodyText = await unformattedResponse.text();
           const errString = `Pokémon not found`;
-          Platform.OS === "android"
-            ? ToastAndroid.show(errString, ToastAndroid.SHORT)
-            : Alert.alert("Error", errString);
+          if (Platform.OS === "android") {
+            ToastAndroid.show(errString, ToastAndroid.SHORT);
+          } else {
+            Alert.alert("Error", errString);
+          }
           setIsSearching(false);
           throw new Error(
             bodyText ||
@@ -129,8 +131,9 @@ export default function Search() {
     <View style={{ backgroundColor: theme.background, flex: 1 }}>
       {!selectedPokemon ? (
         <ScrollView
+          keyboardDismissMode="on-drag"
           contentContainerStyle={{
-            gap: 16,
+            gap: 20,
             padding: 16,
             paddingBottom: 16 + bottomBarTabHeight,
           }}
