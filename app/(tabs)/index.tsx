@@ -6,6 +6,7 @@ import {
   Button,
   FlatList,
   Image,
+  Platform,
   StyleSheet,
   useColorScheme,
   View,
@@ -151,8 +152,12 @@ export default function Collection() {
                   {"Fly to another region?"}
                 </Text>
                 <Button
-                  title={viewRegionPicker ? "Close" : "Search"}
-                  color={theme.iconColorFocused}
+                  title={viewRegionPicker ? "Close" : "Select"}
+                  color={
+                    Platform.OS === "ios"
+                      ? theme.iconColorFocused
+                      : theme.buttonBackground
+                  }
                   onPress={() => showRegionPicker()}
                 />
               </View>
