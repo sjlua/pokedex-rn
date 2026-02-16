@@ -24,7 +24,16 @@
     "web": {
       "output": "server",
       "favicon": "./assets/images/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "name": "Dexern",
+      "shortName": "Dexern",
+      "description": "A comprehensive Pokédex app to explore and track your favorite Pokémon",
+      "themeColor": "#E6F4FE",
+      "backgroundColor": "#ffffff",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/dexern",
+      "scope": "/dexern"
     },
     "plugins": [
       "expo-router",

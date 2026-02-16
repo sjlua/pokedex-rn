@@ -17,6 +17,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
+import Head from "../../components/Head";
 
 interface Pokemon {
   pokedex: number;
@@ -202,289 +203,72 @@ export default function PartnerPokemon() {
   };
 
   return (
-    <View style={{ backgroundColor: theme.background, flex: 1 }}>
-      {!favouriteMon ? (
-        <ScrollView
-          keyboardDismissMode="on-drag"
-          contentContainerStyle={{
-            gap: 20,
-            padding: 16,
-            paddingBottom: 16 + bottomBarTabHeight,
-          }}
-        >
-          {/* Header */}
-          <View style={styles.header}>
-            <Text style={[styles.title, { color: theme.title }]}>
-              Partner Pokémon
-            </Text>
-            <Ionicons
-              name="heart-outline"
-              size={28}
-              color={theme.iconColorFocused}
-            />
-          </View>
-
-          {/* Search Bar */}
-          <View
-            style={[
-              styles.searchBarContainer,
-              { backgroundColor: theme.navBackground },
-            ]}
+    <>
+      <Head
+        title="My Partner Pokémon - Dexern"
+        description="Choose and view your partner Pokémon companion"
+      />
+      <View style={{ backgroundColor: theme.background, flex: 1 }}>
+        {!favouriteMon ? (
+          <ScrollView
+            keyboardDismissMode="on-drag"
+            contentContainerStyle={{
+              gap: 20,
+              padding: 16,
+              paddingBottom: 16 + bottomBarTabHeight,
+            }}
           >
-            <Ionicons
-              name="search"
-              size={18}
-              color={theme.subtext}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              placeholder="Name or Pokedex #"
-              placeholderTextColor={theme.subtext}
-              value={query}
-              style={[styles.searchInput, { color: theme.text }]}
-              onChangeText={setQuery}
-              onSubmitEditing={handleSearch}
-              autoCapitalize="none"
-              returnKeyType="search"
-              selectionColor={theme.selectionColour}
-            />
-            {query.length > 0 && (
-              <Pressable onPress={handleClearSearch} style={styles.clearButton}>
-                <Ionicons
-                  name="close-circle-outline"
-                  size={18}
-                  color={theme.subtext}
-                />
-              </Pressable>
-            )}
-          </View>
+            {/* Header */}
+            <View style={styles.header}>
+              <Text style={[styles.title, { color: theme.title }]}>
+                Partner Pokémon
+              </Text>
+              <Ionicons
+                name="heart-outline"
+                size={28}
+                color={theme.iconColorFocused}
+              />
+            </View>
 
-          {/* Search Button */}
-          <Pressable
-            style={[
-              styles.searchButton,
-              { backgroundColor: theme.buttonBackground },
-            ]}
-            onPress={handleSearch}
-          >
-            <Ionicons name="search" size={18} color={theme.text} />
-            <Text style={[styles.searchButtonText, { color: theme.text }]}>
-              Choose Partner
-            </Text>
-          </Pressable>
-
-          {/* Info Section */}
-          <View style={styles.infoSection}>
+            {/* Search Bar */}
             <View
-              style={[styles.infoBox, { backgroundColor: theme.navBackground }]}
+              style={[
+                styles.searchBarContainer,
+                { backgroundColor: theme.navBackground },
+              ]}
             >
               <Ionicons
-                name="information-circle-outline"
-                size={24}
-                color={theme.iconColorFocused}
+                name="search"
+                size={18}
+                color={theme.subtext}
+                style={styles.searchIcon}
               />
-              <Text style={[styles.infoText, { color: theme.text }]}>
-                Select your favorite Pokémon by name or National Pokédex number
-              </Text>
-            </View>
-          </View>
-
-          {/* Examples */}
-          <View style={styles.examplesSection}>
-            <Text style={[styles.examplesTitle, { color: theme.text }]}>
-              Popular Choices
-            </Text>
-            <View style={styles.examplesGrid}>
-              {["pikachu", "charizard", "blastoise", "venusaur"].map(
-                (example) => (
-                  <Pressable
-                    key={example}
-                    style={[
-                      styles.exampleButton,
-                      { backgroundColor: theme.navBackground },
-                    ]}
-                    onPress={() => {
-                      setQuery(example);
-                      setSelectedName(example);
-                    }}
-                  >
-                    <Text
-                      style={[styles.exampleButtonText, { color: theme.text }]}
-                    >
-                      {example}
-                    </Text>
-                  </Pressable>
-                ),
+              <TextInput
+                placeholder="Name or Pokedex #"
+                placeholderTextColor={theme.subtext}
+                value={query}
+                style={[styles.searchInput, { color: theme.text }]}
+                onChangeText={setQuery}
+                onSubmitEditing={handleSearch}
+                autoCapitalize="none"
+                returnKeyType="search"
+                selectionColor={theme.selectionColour}
+              />
+              {query.length > 0 && (
+                <Pressable
+                  onPress={handleClearSearch}
+                  style={styles.clearButton}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={18}
+                    color={theme.subtext}
+                  />
+                </Pressable>
               )}
             </View>
-          </View>
-        </ScrollView>
-      ) : (
-        <ScrollView
-          keyboardDismissMode="on-drag"
-          contentContainerStyle={{
-            gap: 16,
-            padding: 16,
-            paddingBottom: 16 + bottomBarTabHeight,
-          }}
-        >
-          {/* Header with Back Button */}
-          <View style={styles.resultHeader}>
-            <Pressable onPress={handleNewPartner} style={styles.backButton}>
-              <Ionicons
-                name="chevron-back"
-                size={24}
-                color={theme.iconColorFocused}
-              />
-              <Text
-                style={[
-                  styles.backButtonText,
-                  { color: theme.iconColorFocused },
-                ]}
-              >
-                Back
-              </Text>
-            </Pressable>
-            {isLoading && (
-              <Ionicons name="hourglass" size={20} color={theme.subtext} />
-            )}
-          </View>
 
-          {/* Partner Pokemon Card */}
-          <View
-            style={[
-              styles.pokemonCard,
-              {
-                backgroundColor:
-                  bgColourByType[favouriteMon.types[0].type.name] + 70,
-              },
-            ]}
-          >
-            <View style={styles.pokemonCardContent}>
-              {/* Header with name and icon */}
-              <View style={styles.nameSection}>
-                <View>
-                  <Text style={[styles.pokemonName, { color: theme.title }]}>
-                    {favouriteMon.name.toLocaleUpperCase()}
-                  </Text>
-                  <Text style={[styles.pokedexNumber, { color: theme.title }]}>
-                    #{favouriteMon.pokedex}
-                  </Text>
-                </View>
-                <Ionicons
-                  name="heart"
-                  size={32}
-                  color={theme.title}
-                  style={{ opacity: 0.8 }}
-                />
-              </View>
-
-              {/* Types */}
-              <View style={styles.typesRow}>
-                {favouriteMon.types.map((type) => (
-                  <View
-                    key={favouriteMon.name + type.type.name}
-                    style={[
-                      styles.typeTag,
-                      { backgroundColor: "rgba(255,255,255,0.3)" },
-                    ]}
-                  >
-                    <Text style={[styles.typeText, { color: theme.title }]}>
-                      {type.type.name}
-                    </Text>
-                  </View>
-                ))}
-              </View>
-
-              {/* Shiny Toggle */}
-              <View style={styles.shinyToggleRow}>
-                <View style={styles.shinyLabelContainer}>
-                  <Ionicons
-                    name={boolShowShiny ? "sparkles" : "image-outline"}
-                    size={18}
-                    color={theme.title}
-                  />
-                  <Text style={[styles.shinyLabel, { color: theme.title }]}>
-                    {boolShowShiny ? "Shiny" : "Normal"}
-                  </Text>
-                </View>
-                <Switch
-                  value={boolShowShiny}
-                  onValueChange={(next: boolean) => setShowStatus(next)}
-                  accessibilityLabel="Toggle shiny form"
-                />
-              </View>
-
-              {/* Pokemon Image */}
-              <View style={styles.imageContainer}>
-                {boolShowShiny ? (
-                  <Image
-                    source={{ uri: favouriteMon.imageFrontShinyLink }}
-                    style={styles.pokemonImage}
-                  />
-                ) : (
-                  <Image
-                    source={{ uri: favouriteMon.imageFrontLink }}
-                    style={styles.pokemonImage}
-                  />
-                )}
-              </View>
-            </View>
-          </View>
-
-          {/* Change Partner Section Header */}
-          <View style={styles.changeSection}>
-            <View style={styles.changeSectionHeader}>
-              <Ionicons
-                name="swap-vertical"
-                size={20}
-                color={theme.iconColorFocused}
-              />
-              <Text style={[styles.changeTitle, { color: theme.title }]}>
-                Change Your Partner
-              </Text>
-            </View>
-            <Text style={[styles.changeSubtitle, { color: theme.subtext }]}>
-              Select a different Pokémon to be your new partner
-            </Text>
-          </View>
-
-          {/* Change Partner Search Bar */}
-          <View
-            style={[
-              styles.searchBarContainer,
-              { backgroundColor: theme.navBackground },
-            ]}
-          >
-            <Ionicons
-              name="search"
-              size={18}
-              color={theme.subtext}
-              style={styles.searchIcon}
-            />
-            <TextInput
-              placeholder="Choose another..."
-              placeholderTextColor={theme.subtext}
-              value={query}
-              style={[styles.searchInput, { color: theme.text }]}
-              onChangeText={setQuery}
-              onSubmitEditing={handleSearch}
-              autoCapitalize="none"
-              returnKeyType="search"
-              selectionColor={theme.selectionColour}
-            />
-            {query.length > 0 && (
-              <Pressable onPress={handleClearSearch} style={styles.clearButton}>
-                <Ionicons
-                  name="close-circle-outline"
-                  size={18}
-                  color={theme.subtext}
-                />
-              </Pressable>
-            )}
-          </View>
-
-          {query.length > 0 && (
+            {/* Search Button */}
             <Pressable
               style={[
                 styles.searchButton,
@@ -494,13 +278,251 @@ export default function PartnerPokemon() {
             >
               <Ionicons name="search" size={18} color={theme.text} />
               <Text style={[styles.searchButtonText, { color: theme.text }]}>
-                Change Partner
+                Choose Partner
               </Text>
             </Pressable>
-          )}
-        </ScrollView>
-      )}
-    </View>
+
+            {/* Info Section */}
+            <View style={styles.infoSection}>
+              <View
+                style={[
+                  styles.infoBox,
+                  { backgroundColor: theme.navBackground },
+                ]}
+              >
+                <Ionicons
+                  name="information-circle-outline"
+                  size={24}
+                  color={theme.iconColorFocused}
+                />
+                <Text style={[styles.infoText, { color: theme.text }]}>
+                  Select your favorite Pokémon by name or National Pokédex
+                  number
+                </Text>
+              </View>
+            </View>
+
+            {/* Examples */}
+            <View style={styles.examplesSection}>
+              <Text style={[styles.examplesTitle, { color: theme.text }]}>
+                Popular Choices
+              </Text>
+              <View style={styles.examplesGrid}>
+                {["pikachu", "charizard", "blastoise", "venusaur"].map(
+                  (example) => (
+                    <Pressable
+                      key={example}
+                      style={[
+                        styles.exampleButton,
+                        { backgroundColor: theme.navBackground },
+                      ]}
+                      onPress={() => {
+                        setQuery(example);
+                        setSelectedName(example);
+                      }}
+                    >
+                      <Text
+                        style={[
+                          styles.exampleButtonText,
+                          { color: theme.text },
+                        ]}
+                      >
+                        {example}
+                      </Text>
+                    </Pressable>
+                  ),
+                )}
+              </View>
+            </View>
+          </ScrollView>
+        ) : (
+          <ScrollView
+            keyboardDismissMode="on-drag"
+            contentContainerStyle={{
+              gap: 16,
+              padding: 16,
+              paddingBottom: 16 + bottomBarTabHeight,
+            }}
+          >
+            {/* Header with Back Button */}
+            <View style={styles.resultHeader}>
+              <Pressable onPress={handleNewPartner} style={styles.backButton}>
+                <Ionicons
+                  name="chevron-back"
+                  size={24}
+                  color={theme.iconColorFocused}
+                />
+                <Text
+                  style={[
+                    styles.backButtonText,
+                    { color: theme.iconColorFocused },
+                  ]}
+                >
+                  Back
+                </Text>
+              </Pressable>
+              {isLoading && (
+                <Ionicons name="hourglass" size={20} color={theme.subtext} />
+              )}
+            </View>
+
+            {/* Partner Pokemon Card */}
+            <View
+              style={[
+                styles.pokemonCard,
+                {
+                  backgroundColor:
+                    bgColourByType[favouriteMon.types[0].type.name] + 70,
+                },
+              ]}
+            >
+              <View style={styles.pokemonCardContent}>
+                {/* Header with name and icon */}
+                <View style={styles.nameSection}>
+                  <View>
+                    <Text style={[styles.pokemonName, { color: theme.title }]}>
+                      {favouriteMon.name.toLocaleUpperCase()}
+                    </Text>
+                    <Text
+                      style={[styles.pokedexNumber, { color: theme.title }]}
+                    >
+                      #{favouriteMon.pokedex}
+                    </Text>
+                  </View>
+                  <Ionicons
+                    name="heart"
+                    size={32}
+                    color={theme.title}
+                    style={{ opacity: 0.8 }}
+                  />
+                </View>
+
+                {/* Types */}
+                <View style={styles.typesRow}>
+                  {favouriteMon.types.map((type) => (
+                    <View
+                      key={favouriteMon.name + type.type.name}
+                      style={[
+                        styles.typeTag,
+                        { backgroundColor: "rgba(255,255,255,0.3)" },
+                      ]}
+                    >
+                      <Text style={[styles.typeText, { color: theme.title }]}>
+                        {type.type.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                {/* Shiny Toggle */}
+                <View style={styles.shinyToggleRow}>
+                  <View style={styles.shinyLabelContainer}>
+                    <Ionicons
+                      name={boolShowShiny ? "sparkles" : "image-outline"}
+                      size={18}
+                      color={theme.title}
+                    />
+                    <Text style={[styles.shinyLabel, { color: theme.title }]}>
+                      {boolShowShiny ? "Shiny" : "Normal"}
+                    </Text>
+                  </View>
+                  <Switch
+                    value={boolShowShiny}
+                    onValueChange={(next: boolean) => setShowStatus(next)}
+                    accessibilityLabel="Toggle shiny form"
+                  />
+                </View>
+
+                {/* Pokemon Image */}
+                <View style={styles.imageContainer}>
+                  {boolShowShiny ? (
+                    <Image
+                      source={{ uri: favouriteMon.imageFrontShinyLink }}
+                      style={styles.pokemonImage}
+                    />
+                  ) : (
+                    <Image
+                      source={{ uri: favouriteMon.imageFrontLink }}
+                      style={styles.pokemonImage}
+                    />
+                  )}
+                </View>
+              </View>
+            </View>
+
+            {/* Change Partner Section Header */}
+            <View style={styles.changeSection}>
+              <View style={styles.changeSectionHeader}>
+                <Ionicons
+                  name="swap-vertical"
+                  size={20}
+                  color={theme.iconColorFocused}
+                />
+                <Text style={[styles.changeTitle, { color: theme.title }]}>
+                  Change Your Partner
+                </Text>
+              </View>
+              <Text style={[styles.changeSubtitle, { color: theme.subtext }]}>
+                Select a different Pokémon to be your new partner
+              </Text>
+            </View>
+
+            {/* Change Partner Search Bar */}
+            <View
+              style={[
+                styles.searchBarContainer,
+                { backgroundColor: theme.navBackground },
+              ]}
+            >
+              <Ionicons
+                name="search"
+                size={18}
+                color={theme.subtext}
+                style={styles.searchIcon}
+              />
+              <TextInput
+                placeholder="Choose another..."
+                placeholderTextColor={theme.subtext}
+                value={query}
+                style={[styles.searchInput, { color: theme.text }]}
+                onChangeText={setQuery}
+                onSubmitEditing={handleSearch}
+                autoCapitalize="none"
+                returnKeyType="search"
+                selectionColor={theme.selectionColour}
+              />
+              {query.length > 0 && (
+                <Pressable
+                  onPress={handleClearSearch}
+                  style={styles.clearButton}
+                >
+                  <Ionicons
+                    name="close-circle-outline"
+                    size={18}
+                    color={theme.subtext}
+                  />
+                </Pressable>
+              )}
+            </View>
+
+            {query.length > 0 && (
+              <Pressable
+                style={[
+                  styles.searchButton,
+                  { backgroundColor: theme.buttonBackground },
+                ]}
+                onPress={handleSearch}
+              >
+                <Ionicons name="search" size={18} color={theme.text} />
+                <Text style={[styles.searchButtonText, { color: theme.text }]}>
+                  Change Partner
+                </Text>
+              </Pressable>
+            )}
+          </ScrollView>
+        )}
+      </View>
+    </>
   );
 }
 
