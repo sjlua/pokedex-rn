@@ -61,17 +61,27 @@ export default function Collection() {
   // tracks the number of items on screen from 0-currentPage.
   const [currentPage, setCurrentPage] = useState<number>(0);
 
+  // Force re-render to fix color scheme detection on initial load
+  const [mounted, setMounted] = useState<boolean>(false);
+
   // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
   const colourScheme = useColorScheme() ?? "light";
   const theme = Colours[colourScheme];
+
+  // useEffect to handle initial mount for color scheme detection
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // useEffect first param runs it on first boot
   useEffect(() => {
     // Fetch Pokemon, create UI
     // The Depedency List that currentPage is in below, ensures that useEffect is called
     // whenever changes are made to whatever state variables are in the Depedency List
-    fetchPokemon();
-  }, [currentPage, selectedRegion]);
+    if (mounted) {
+      fetchPokemon();
+    }
+  }, [currentPage, selectedRegion, mounted]);
 
   async function fetchPokemon() {
     try {
@@ -122,6 +132,11 @@ export default function Collection() {
   const showRegionPicker = async () => {
     viewRegionPicker ? setRegionPicker(false) : setRegionPicker(true);
   };
+
+  // Don't render until color scheme is properly detected
+  if (!mounted) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   return (
     // replaces standard unscrollable view with scrollable

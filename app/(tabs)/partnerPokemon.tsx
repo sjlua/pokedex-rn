@@ -69,30 +69,49 @@ export default function PartnerPokemon() {
   const [boolShowShiny, setShowStatus] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
+  // Force re-render to fix color scheme detection on initial load
+  const [mounted, setMounted] = useState<boolean>(false);
+
   const colourScheme = useColorScheme() ?? "light";
   const theme = Colours[colourScheme];
 
+  // useEffect to handle initial mount for color scheme detection
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Load saved partner Pokemon on mount
   useEffect(() => {
-    loadSavedPartner();
-  }, []);
+    if (mounted) {
+      loadSavedPartner();
+    }
+  }, [mounted]);
 
   // Fetch new Pokemon when selectedName changes
   useEffect(() => {
-    getFavouritePokemonStats();
-  }, [selectedName]);
+    if (mounted) {
+      getFavouritePokemonStats();
+    }
+  }, [selectedName, mounted]);
 
   // Save partner Pokemon whenever it changes
   useEffect(() => {
-    if (favouriteMon) {
+    if (mounted && favouriteMon) {
       saveFavouriteMon(favouriteMon);
     }
-  }, [favouriteMon]);
+  }, [favouriteMon, mounted]);
 
   // Save shiny preference whenever it changes
   useEffect(() => {
-    saveShinyPreference(boolShowShiny);
-  }, [boolShowShiny]);
+    if (mounted) {
+      saveShinyPreference(boolShowShiny);
+    }
+  }, [boolShowShiny, mounted]);
+
+  // Don't render until color scheme is properly detected
+  if (!mounted) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   async function loadSavedPartner() {
     try {

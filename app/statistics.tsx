@@ -106,25 +106,40 @@ export default function Statistics() {
   // Animation values for web
   const [slideAnim] = useState(new Animated.Value(50));
 
+  // Force re-render to fix color scheme detection on initial load
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
+  const colourScheme = useColorScheme() ?? "light";
+  const theme = Colours[colourScheme];
+
+  // useEffect to handle initial mount for color scheme detection
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   // Fetches Pokemon data on load
   useEffect(() => {
-    fetchPokemonByName(params.name);
-  }, [params.name]);
+    if (mounted) {
+      fetchPokemonByName(params.name);
+    }
+  }, [params.name, mounted]);
 
   // Animate on mount (web only)
   useEffect(() => {
-    if (Platform.OS === "web") {
+    if (mounted && Platform.OS === "web") {
       Animated.timing(slideAnim, {
         toValue: 0,
         duration: 400,
         useNativeDriver: true,
       }).start();
     }
-  }, []);
+  }, [mounted]);
 
-  // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
-  const colourScheme = useColorScheme() ?? "light";
-  const theme = Colours[colourScheme];
+  // Don't render until color scheme is properly detected
+  if (!mounted) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   async function fetchPokemonByName(name: string) {
     try {

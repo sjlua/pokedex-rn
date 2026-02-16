@@ -60,12 +60,27 @@ export default function Search() {
   const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
+  // Force re-render to fix color scheme detection on initial load
+  const [mounted, setMounted] = useState<boolean>(false);
+
   const colourScheme = useColorScheme() ?? "light";
   const theme = Colours[colourScheme];
 
+  // useEffect to handle initial mount for color scheme detection
   useEffect(() => {
-    searchPokemon();
-  }, [selectedName]);
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted) {
+      searchPokemon();
+    }
+  }, [selectedName, mounted]);
+
+  // Don't render until color scheme is properly detected
+  if (!mounted) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   async function searchPokemon() {
     try {

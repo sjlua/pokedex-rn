@@ -1,13 +1,27 @@
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
 import { Tabs } from "expo-router";
-import { StyleSheet, useColorScheme } from "react-native";
+import { useEffect, useState } from "react";
+import { StyleSheet, useColorScheme, View } from "react-native";
 import { Colours } from "../../constants/colours";
 
 export default function TabsLayout() {
+  // Force re-render to fix color scheme detection on initial load
+  const [mounted, setMounted] = useState<boolean>(false);
+
   // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
   const colourScheme = useColorScheme() ?? "light";
   const theme = Colours[colourScheme];
+
+  // useEffect to handle initial mount for color scheme detection
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Don't render until color scheme is properly detected
+  if (!mounted) {
+    return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
 
   return (
     <Tabs
