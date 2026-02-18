@@ -1,9 +1,24 @@
 import { isLiquidGlassAvailable } from "expo-glass-effect";
 import { Stack } from "expo-router";
+import ExpoHead from "expo-router/head";
 import { useEffect, useState } from "react";
-import { StatusBar, useColorScheme, View } from "react-native";
+import { Platform, StatusBar, useColorScheme, View } from "react-native";
 import { Colours } from "../constants/colours";
 import Head from "../components/Head";
+
+const PWAHead = () => {
+  if (Platform.OS !== "web") return null;
+  return (
+    <ExpoHead>
+      <link rel="manifest" href="/dexern/manifest.json" />
+      <link rel="apple-touch-icon" href="/dexern/apple-touch-icon.png" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+      <meta name="apple-mobile-web-app-title" content="Dexern" />
+    </ExpoHead>
+  );
+};
 
 export default function RootLayout() {
   // Force re-render to fix color scheme detection on initial load
@@ -21,6 +36,7 @@ export default function RootLayout() {
   if (!mounted) {
     return (
       <>
+        <PWAHead />
         <StatusBar
           barStyle={colourScheme === "dark" ? "light-content" : "dark-content"}
           backgroundColor={theme.background}
@@ -32,6 +48,7 @@ export default function RootLayout() {
 
   return (
     <>
+      <PWAHead />
       <Head
         title="Dexern - Your Pokédex Companion"
         description="A comprehensive Pokédex app to explore and track your favorite Pokémon"

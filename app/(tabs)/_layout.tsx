@@ -28,6 +28,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerStyle: { backgroundColor: theme.navBackground },
         headerTintColor: theme.title,
+        headerTitleAlign: "center",
         tabBarActiveTintColor: theme.iconColorFocused,
         tabBarInactiveTintColor: theme.iconColor,
         tabBarStyle: { position: "absolute" },

@@ -1,0 +1,25 @@
+{
+  "name": "Dexern",
+  "short_name": "Dexern",
+  "description": "A comprehensive Pokédex app to explore and track your favorite Pokémon",
+  "start_url": "/dexern/",
+  "scope": "/dexern/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#E6F4FE",
+  "background_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/dexern/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/dexern/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
