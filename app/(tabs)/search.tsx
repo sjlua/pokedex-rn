@@ -195,7 +195,7 @@ export default function Search() {
   return (
     <>
       <Head
-        title="Search Pokémon - Dexern"
+        title="Search Pokémon"
         description="Search and discover information about any Pokémon by name or Pokédex number"
       />
       <SafeAreaView

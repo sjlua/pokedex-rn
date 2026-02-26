@@ -17,7 +17,6 @@ import {
   Text,
   TextInput,
   ToastAndroid,
-  TouchableWithoutFeedback,
   useColorScheme,
   View,
   Pressable,
@@ -410,411 +409,423 @@ export default function PartnerPokemon() {
   return (
     <>
       <Head
-        title="My Partner Pokémon - Dexern"
-        description="Choose and view your partner Pokémon companion"
+        title="My Partner Pokémon"
+        description="Choose and view your partner Pokémon"
       />
       <SafeAreaView
         edges={["top"]}
         style={{ backgroundColor: theme.background, flex: 1 }}
       >
         {!favouriteMon ? (
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{
-                gap: 20,
-                padding: 16,
-                paddingBottom: insets.bottom + 16,
-              }}
+          <ScrollView
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="handled"
+            onScrollBeginDrag={
+              Platform.OS !== "web" ? Keyboard.dismiss : undefined
+            }
+            contentContainerStyle={{
+              gap: 20,
+              padding: 16,
+              paddingBottom: insets.bottom + 16,
+            }}
+          >
+            {/* Trainer Card */}
+            <TrainerCard
+              trainerName={trainerName}
+              trainerRegion={trainerRegion}
+              isRegionPickerOpen={isRegionPickerOpen}
+              onNameChange={handleTrainerNameChange}
+              onRegionToggle={() => setIsRegionPickerOpen((prev) => !prev)}
+              onRegionSelect={handleTrainerRegionChange}
+              theme={theme}
+            />
+
+            {/* Choose Partner Dropdown */}
+            <View
+              style={[
+                styles.changeDropdown,
+                { backgroundColor: theme.uiBackground },
+              ]}
             >
-              {/* Trainer Card */}
-              <TrainerCard
-                trainerName={trainerName}
-                trainerRegion={trainerRegion}
-                isRegionPickerOpen={isRegionPickerOpen}
-                onNameChange={handleTrainerNameChange}
-                onRegionToggle={() => setIsRegionPickerOpen((prev) => !prev)}
-                onRegionSelect={handleTrainerRegionChange}
-                theme={theme}
-              />
-
-              {/* Header */}
-              <View style={styles.header}>
-                <Text style={[styles.title, { color: theme.title }]}>
-                  Partner Pokémon
-                </Text>
-                <MaterialIcons
-                  name="favorite-border"
-                  size={28}
-                  color={theme.iconColorFocused}
-                />
-              </View>
-
-              {/* Search Bar */}
-              <View
-                style={[
-                  styles.searchBarContainer,
-                  { backgroundColor: theme.uiBackground },
-                ]}
-              >
-                <MaterialIcons
-                  name="search"
-                  size={18}
-                  color={theme.subtext}
-                  style={styles.searchIcon}
-                />
-                <TextInput
-                  placeholder="Name or Pokedex #"
-                  placeholderTextColor={theme.subtext}
-                  value={query}
-                  style={[styles.searchInput, { color: theme.text }]}
-                  onChangeText={setQuery}
-                  onSubmitEditing={handleSearch}
-                  autoCapitalize="none"
-                  returnKeyType="search"
-                  selectionColor={theme.selectionColour}
-                />
-                {query.length > 0 && (
-                  <Pressable
-                    onPress={handleClearSearch}
-                    style={styles.clearButton}
-                  >
-                    <MaterialIcons
-                      name="cancel"
-                      size={18}
-                      color={theme.subtext}
-                    />
-                  </Pressable>
-                )}
-              </View>
-
-              {/* Search Button */}
+              {/* Dropdown Header / Toggle */}
               <Pressable
-                style={[
-                  styles.searchButton,
-                  { backgroundColor: theme.buttonBackground },
-                ]}
-                onPress={handleSearch}
+                style={styles.changeDropdownHeader}
+                onPress={() => {
+                  setIsChangeOpen((prev) => !prev);
+                  setQuery("");
+                }}
               >
-                <MaterialIcons name="search" size={18} color={theme.text} />
-                <Text style={[styles.searchButtonText, { color: theme.text }]}>
-                  Choose Partner
-                </Text>
-              </Pressable>
-
-              {/* Info Section */}
-              <View style={styles.infoSection}>
-                <View
-                  style={[
-                    styles.infoBox,
-                    { backgroundColor: theme.uiBackground },
-                  ]}
-                >
+                <View style={styles.changeSectionHeader}>
                   <MaterialIcons
-                    name="info-outline"
-                    size={24}
+                    name="catching-pokemon"
+                    size={20}
                     color={theme.iconColorFocused}
                   />
-                  <Text style={[styles.infoText, { color: theme.text }]}>
-                    Select your favorite Pokémon by name or National Pokédex
-                    number
+                  <Text style={[styles.changeTitle, { color: theme.title }]}>
+                    Choose Your Partner
                   </Text>
                 </View>
-              </View>
-
-              {/* Examples */}
-              <View style={styles.examplesSection}>
-                <Text style={[styles.examplesTitle, { color: theme.text }]}>
-                  Popular Choices
-                </Text>
-                <View style={styles.examplesGrid}>
-                  {["pikachu", "charizard", "blastoise", "venusaur"].map(
-                    (example) => (
-                      <Pressable
-                        key={example}
-                        style={[
-                          styles.exampleButton,
-                          { backgroundColor: theme.uiBackground },
-                        ]}
-                        onPress={() => {
-                          setQuery(example);
-                          setSelectedName(example);
-                        }}
-                      >
-                        <Text
-                          style={[
-                            styles.exampleButtonText,
-                            { color: theme.text },
-                          ]}
-                        >
-                          {example}
-                        </Text>
-                      </Pressable>
-                    ),
-                  )}
-                </View>
-              </View>
-            </ScrollView>
-          </TouchableWithoutFeedback>
-        ) : (
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <ScrollView
-              keyboardDismissMode="on-drag"
-              keyboardShouldPersistTaps="handled"
-              contentContainerStyle={{
-                gap: 16,
-                padding: 16,
-                paddingBottom: insets.bottom + 16,
-              }}
-            >
-              {/* Trainer Card */}
-              <TrainerCard
-                trainerName={trainerName}
-                trainerRegion={trainerRegion}
-                isRegionPickerOpen={isRegionPickerOpen}
-                onNameChange={handleTrainerNameChange}
-                onRegionToggle={() => setIsRegionPickerOpen((prev) => !prev)}
-                onRegionSelect={handleTrainerRegionChange}
-                theme={theme}
-              />
-
-              {/* Loading indicator */}
-              {isLoading && (
                 <MaterialIcons
-                  name="hourglass-empty"
-                  size={20}
+                  name={isChangeOpen ? "expand-less" : "expand-more"}
+                  size={24}
                   color={theme.subtext}
                 />
-              )}
+              </Pressable>
 
-              {/* Partner Pokemon Card */}
-              <Link
-                href={{
-                  pathname: "/statistics",
-                  params: { name: favouriteMon.name },
-                }}
-                style={[
-                  styles.pokemonCard,
-                  {
-                    backgroundColor:
-                      bgColourByType[favouriteMon.types[0].type.name] + 70,
-                    width: "100%",
-                  },
-                ]}
-              >
-                <View style={styles.pokemonCardContent}>
-                  {/* Header with name and icon */}
-                  <View style={styles.nameSection}>
-                    <View>
-                      <Text
-                        style={[styles.pokemonName, { color: theme.title }]}
-                      >
-                        {favouriteMon.name.toLocaleUpperCase()}
-                      </Text>
-                      <Text
-                        style={[styles.pokedexNumber, { color: theme.title }]}
-                      >
-                        #{favouriteMon.pokedex}
-                      </Text>
-                    </View>
+              {/* Dropdown Body */}
+              {isChangeOpen && (
+                <View style={styles.changeDropdownBody}>
+                  {/* Search Bar */}
+                  <View
+                    style={[
+                      styles.searchBarContainer,
+                      { backgroundColor: theme.navBackground },
+                    ]}
+                  >
                     <MaterialIcons
-                      name="favorite"
-                      size={32}
-                      color={theme.title}
-                      style={{ opacity: 0.8 }}
+                      name="search"
+                      size={18}
+                      color={theme.subtext}
+                      style={styles.searchIcon}
                     />
-                  </View>
-
-                  {/* Types */}
-                  <View style={styles.typesRow}>
-                    {favouriteMon.types.map((type) => (
-                      <View
-                        key={favouriteMon.name + type.type.name}
-                        style={[
-                          styles.typeTag,
-                          { backgroundColor: "rgba(255,255,255,0.3)" },
-                        ]}
+                    <TextInput
+                      placeholder="Name or Pokédex #"
+                      placeholderTextColor={theme.subtext}
+                      value={query}
+                      style={[styles.searchInput, { color: theme.text }]}
+                      onChangeText={setQuery}
+                      onSubmitEditing={handleSearch}
+                      autoCapitalize="none"
+                      returnKeyType="search"
+                      selectionColor={theme.selectionColour}
+                    />
+                    {query.length > 0 && (
+                      <Pressable
+                        onPress={handleClearSearch}
+                        style={styles.clearButton}
                       >
-                        <Text style={[styles.typeText, { color: theme.title }]}>
-                          {type.type.name}
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
-
-                  {/* Shiny Toggle */}
-                  <View style={styles.shinyToggleRow}>
-                    <View style={styles.shinyLabelContainer}>
-                      <MaterialIcons
-                        name={boolShowShiny ? "auto-awesome" : "image"}
-                        size={18}
-                        color={theme.title}
-                      />
-                      <Text style={[styles.shinyLabel, { color: theme.title }]}>
-                        {boolShowShiny ? "Shiny" : "Normal"}
-                      </Text>
-                    </View>
-                    <Switch
-                      value={boolShowShiny}
-                      onValueChange={(next: boolean) => setShowStatus(next)}
-                      accessibilityLabel="Toggle shiny form"
-                    />
-                  </View>
-
-                  {/* Pokemon Image */}
-                  <View style={styles.imageContainer}>
-                    {boolShowShiny ? (
-                      <Image
-                        source={{ uri: favouriteMon.imageFrontShinyLink }}
-                        style={styles.pokemonImage}
-                      />
-                    ) : (
-                      <Image
-                        source={{ uri: favouriteMon.imageFrontLink }}
-                        style={styles.pokemonImage}
-                      />
+                        <MaterialIcons
+                          name="cancel"
+                          size={18}
+                          color={theme.subtext}
+                        />
+                      </Pressable>
                     )}
                   </View>
-                </View>
-              </Link>
 
-              {/* Change Partner Dropdown */}
-              <View
-                style={[
-                  styles.changeDropdown,
-                  { backgroundColor: theme.uiBackground },
-                ]}
-              >
-                {/* Dropdown Header / Toggle */}
-                <Pressable
-                  style={styles.changeDropdownHeader}
-                  onPress={() => {
-                    setIsChangeOpen((prev) => !prev);
-                    setQuery("");
-                  }}
-                >
-                  <View style={styles.changeSectionHeader}>
-                    <MaterialIcons
-                      name="swap-vert"
-                      size={20}
-                      color={theme.iconColorFocused}
-                    />
-                    <Text style={[styles.changeTitle, { color: theme.title }]}>
-                      Change Your Partner
-                    </Text>
-                  </View>
-                  <MaterialIcons
-                    name={isChangeOpen ? "expand-less" : "expand-more"}
-                    size={24}
-                    color={theme.subtext}
-                  />
-                </Pressable>
-
-                {/* Dropdown Body */}
-                {isChangeOpen && (
-                  <View style={styles.changeDropdownBody}>
-                    {/* Search Bar */}
-                    <View
+                  {/* Search Button */}
+                  {query.length > 0 && (
+                    <Pressable
                       style={[
-                        styles.searchBarContainer,
-                        { backgroundColor: theme.navBackground },
+                        styles.searchButton,
+                        { backgroundColor: theme.buttonBackground },
                       ]}
+                      onPress={handleSearch}
                     >
                       <MaterialIcons
                         name="search"
                         size={18}
-                        color={theme.subtext}
-                        style={styles.searchIcon}
+                        color={theme.text}
                       />
-                      <TextInput
-                        placeholder="Choose another..."
-                        placeholderTextColor={theme.subtext}
-                        value={query}
-                        style={[styles.searchInput, { color: theme.text }]}
-                        onChangeText={setQuery}
-                        onSubmitEditing={handleSearch}
-                        autoCapitalize="none"
-                        returnKeyType="search"
-                        selectionColor={theme.selectionColour}
-                      />
-                      {query.length > 0 && (
-                        <Pressable
-                          onPress={handleClearSearch}
-                          style={styles.clearButton}
-                        >
-                          <MaterialIcons
-                            name="cancel"
-                            size={18}
-                            color={theme.subtext}
-                          />
-                        </Pressable>
-                      )}
-                    </View>
+                      <Text
+                        style={[styles.searchButtonText, { color: theme.text }]}
+                      >
+                        Choose Partner
+                      </Text>
+                    </Pressable>
+                  )}
 
-                    {/* Search Button */}
+                  {/* Popular choices */}
+                  <Text
+                    style={[styles.changeSubtitle, { color: theme.subtext }]}
+                  >
+                    Popular choices
+                  </Text>
+                  <View style={styles.examplesGrid}>
+                    {["pikachu", "charizard", "blastoise", "venusaur"].map(
+                      (example) => (
+                        <Pressable
+                          key={example}
+                          style={[
+                            styles.exampleButton,
+                            { backgroundColor: theme.navBackground },
+                          ]}
+                          onPress={() => {
+                            setQuery(example);
+                            setSelectedName(example);
+                            setIsChangeOpen(false);
+                          }}
+                        >
+                          <Text
+                            style={[
+                              styles.exampleButtonText,
+                              { color: theme.text },
+                            ]}
+                          >
+                            {example}
+                          </Text>
+                        </Pressable>
+                      ),
+                    )}
+                  </View>
+                </View>
+              )}
+            </View>
+          </ScrollView>
+        ) : (
+          <ScrollView
+            keyboardDismissMode="on-drag"
+            keyboardShouldPersistTaps="handled"
+            onScrollBeginDrag={
+              Platform.OS !== "web" ? Keyboard.dismiss : undefined
+            }
+            contentContainerStyle={{
+              gap: 16,
+              padding: 16,
+              paddingBottom: insets.bottom + 16,
+            }}
+          >
+            {/* Trainer Card */}
+            <TrainerCard
+              trainerName={trainerName}
+              trainerRegion={trainerRegion}
+              isRegionPickerOpen={isRegionPickerOpen}
+              onNameChange={handleTrainerNameChange}
+              onRegionToggle={() => setIsRegionPickerOpen((prev) => !prev)}
+              onRegionSelect={handleTrainerRegionChange}
+              theme={theme}
+            />
+
+            {/* Loading indicator */}
+            {isLoading && (
+              <MaterialIcons
+                name="hourglass-empty"
+                size={20}
+                color={theme.subtext}
+              />
+            )}
+
+            {/* Partner Pokemon Card */}
+            <Link
+              href={{
+                pathname: "/statistics",
+                params: { name: favouriteMon.name },
+              }}
+              style={[
+                styles.pokemonCard,
+                {
+                  backgroundColor:
+                    bgColourByType[favouriteMon.types[0].type.name] + 70,
+                  width: "100%",
+                },
+              ]}
+            >
+              <View style={styles.pokemonCardContent}>
+                {/* Header with name and icon */}
+                <View style={styles.nameSection}>
+                  <View>
+                    <Text style={[styles.pokemonName, { color: theme.title }]}>
+                      {favouriteMon.name.toLocaleUpperCase()}
+                    </Text>
+                    <Text
+                      style={[styles.pokedexNumber, { color: theme.title }]}
+                    >
+                      #{favouriteMon.pokedex}
+                    </Text>
+                  </View>
+                  <MaterialIcons
+                    name="favorite"
+                    size={32}
+                    color={theme.title}
+                    style={{ opacity: 0.8 }}
+                  />
+                </View>
+
+                {/* Types */}
+                <View style={styles.typesRow}>
+                  {favouriteMon.types.map((type) => (
+                    <View
+                      key={favouriteMon.name + type.type.name}
+                      style={[
+                        styles.typeTag,
+                        { backgroundColor: "rgba(255,255,255,0.3)" },
+                      ]}
+                    >
+                      <Text style={[styles.typeText, { color: theme.title }]}>
+                        {type.type.name}
+                      </Text>
+                    </View>
+                  ))}
+                </View>
+
+                {/* Shiny Toggle */}
+                <View style={styles.shinyToggleRow}>
+                  <View style={styles.shinyLabelContainer}>
+                    <MaterialIcons
+                      name={boolShowShiny ? "auto-awesome" : "image"}
+                      size={18}
+                      color={theme.title}
+                    />
+                    <Text style={[styles.shinyLabel, { color: theme.title }]}>
+                      {boolShowShiny ? "Shiny" : "Normal"}
+                    </Text>
+                  </View>
+                  <Switch
+                    value={boolShowShiny}
+                    onValueChange={(next: boolean) => setShowStatus(next)}
+                    accessibilityLabel="Toggle shiny form"
+                  />
+                </View>
+
+                {/* Pokemon Image */}
+                <View style={styles.imageContainer}>
+                  {boolShowShiny ? (
+                    <Image
+                      source={{ uri: favouriteMon.imageFrontShinyLink }}
+                      style={styles.pokemonImage}
+                    />
+                  ) : (
+                    <Image
+                      source={{ uri: favouriteMon.imageFrontLink }}
+                      style={styles.pokemonImage}
+                    />
+                  )}
+                </View>
+              </View>
+            </Link>
+
+            {/* Change Partner Dropdown */}
+            <View
+              style={[
+                styles.changeDropdown,
+                { backgroundColor: theme.uiBackground },
+              ]}
+            >
+              {/* Dropdown Header / Toggle */}
+              <Pressable
+                style={styles.changeDropdownHeader}
+                onPress={() => {
+                  setIsChangeOpen((prev) => !prev);
+                  setQuery("");
+                }}
+              >
+                <View style={styles.changeSectionHeader}>
+                  <MaterialIcons
+                    name="swap-vert"
+                    size={20}
+                    color={theme.iconColorFocused}
+                  />
+                  <Text style={[styles.changeTitle, { color: theme.title }]}>
+                    Change Your Partner
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name={isChangeOpen ? "expand-less" : "expand-more"}
+                  size={24}
+                  color={theme.subtext}
+                />
+              </Pressable>
+
+              {/* Dropdown Body */}
+              {isChangeOpen && (
+                <View style={styles.changeDropdownBody}>
+                  {/* Search Bar */}
+                  <View
+                    style={[
+                      styles.searchBarContainer,
+                      { backgroundColor: theme.navBackground },
+                    ]}
+                  >
+                    <MaterialIcons
+                      name="search"
+                      size={18}
+                      color={theme.subtext}
+                      style={styles.searchIcon}
+                    />
+                    <TextInput
+                      placeholder="Choose another..."
+                      placeholderTextColor={theme.subtext}
+                      value={query}
+                      style={[styles.searchInput, { color: theme.text }]}
+                      onChangeText={setQuery}
+                      onSubmitEditing={handleSearch}
+                      autoCapitalize="none"
+                      returnKeyType="search"
+                      selectionColor={theme.selectionColour}
+                    />
                     {query.length > 0 && (
                       <Pressable
-                        style={[
-                          styles.searchButton,
-                          { backgroundColor: theme.buttonBackground },
-                        ]}
-                        onPress={handleSearch}
+                        onPress={handleClearSearch}
+                        style={styles.clearButton}
                       >
                         <MaterialIcons
-                          name="search"
+                          name="cancel"
                           size={18}
-                          color={theme.text}
+                          color={theme.subtext}
                         />
-                        <Text
-                          style={[
-                            styles.searchButtonText,
-                            { color: theme.text },
-                          ]}
-                        >
-                          Change Partner
-                        </Text>
                       </Pressable>
                     )}
-
-                    {/* Recommendations */}
-                    <Text
-                      style={[styles.changeSubtitle, { color: theme.subtext }]}
-                    >
-                      Popular choices
-                    </Text>
-                    <View style={styles.examplesGrid}>
-                      {["pikachu", "charizard", "blastoise", "venusaur"].map(
-                        (example) => (
-                          <Pressable
-                            key={example}
-                            style={[
-                              styles.exampleButton,
-                              { backgroundColor: theme.navBackground },
-                            ]}
-                            onPress={() => {
-                              setQuery(example);
-                              setSelectedName(example);
-                              setIsChangeOpen(false);
-                            }}
-                          >
-                            <Text
-                              style={[
-                                styles.exampleButtonText,
-                                { color: theme.text },
-                              ]}
-                            >
-                              {example}
-                            </Text>
-                          </Pressable>
-                        ),
-                      )}
-                    </View>
                   </View>
-                )}
-              </View>
-            </ScrollView>
-          </TouchableWithoutFeedback>
+
+                  {/* Search Button */}
+                  {query.length > 0 && (
+                    <Pressable
+                      style={[
+                        styles.searchButton,
+                        { backgroundColor: theme.buttonBackground },
+                      ]}
+                      onPress={handleSearch}
+                    >
+                      <MaterialIcons
+                        name="search"
+                        size={18}
+                        color={theme.text}
+                      />
+                      <Text
+                        style={[styles.searchButtonText, { color: theme.text }]}
+                      >
+                        Change Partner
+                      </Text>
+                    </Pressable>
+                  )}
+
+                  {/* Recommendations */}
+                  <Text
+                    style={[styles.changeSubtitle, { color: theme.subtext }]}
+                  >
+                    Popular choices
+                  </Text>
+                  <View style={styles.examplesGrid}>
+                    {["pikachu", "charizard", "blastoise", "venusaur"].map(
+                      (example) => (
+                        <Pressable
+                          key={example}
+                          style={[
+                            styles.exampleButton,
+                            { backgroundColor: theme.navBackground },
+                          ]}
+                          onPress={() => {
+                            setQuery(example);
+                            setSelectedName(example);
+                            setIsChangeOpen(false);
+                          }}
+                        >
+                          <Text
+                            style={[
+                              styles.exampleButtonText,
+                              { color: theme.text },
+                            ]}
+                          >
+                            {example}
+                          </Text>
+                        </Pressable>
+                      ),
+                    )}
+                  </View>
+                </View>
+              )}
+            </View>
+          </ScrollView>
         )}
       </SafeAreaView>
     </>

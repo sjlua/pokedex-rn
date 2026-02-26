@@ -7,8 +7,8 @@ All Pokémon names and references used belong to Nintendo and The Pokémon Compa
 - [x] Light/dark mode support.
 - [x] Storing partner Pokemon locally to your device.
 - [x] Add more statistics to the Statistics page (e.g., total weight, height, etc.).
-- [ ] Add Moves to the Statistics page.
-- [ ] Add logo.
+- [x] Add Moves to the Statistics page.
+- [x] Add logo.
 - [ ] Code cleanup and refactoring.
 - [ ] Checklist for storing Pokemon caught status.
 - [ ] Onboarding flow which highlights core features.
