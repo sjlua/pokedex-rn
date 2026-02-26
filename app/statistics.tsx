@@ -4,16 +4,17 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import {
   Animated,
-  Button,
   Image,
   Linking,
   Platform,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   useColorScheme,
   View,
 } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 import { Colours } from "../constants/colours";
 
 interface Pokemon {
@@ -191,7 +192,7 @@ export default function Statistics() {
                   ? bgColourByTypeDark[pokemon.types[0].type.name]
                   : bgColourByType[pokemon.types[0].type.name] + "70",
             }
-          : {},
+          : { backgroundColor: theme.background },
         { paddingBottom: insets.bottom + 64 },
       ]}
     >
@@ -317,34 +318,24 @@ export default function Statistics() {
             ))}
           </View>
 
-          <View
+          <Pressable
             style={[
-              styles.buttonWrap,
-              {
-                backgroundColor:
-                  colourScheme === "dark"
-                    ? "rgba(0,0,0,0.3)"
-                    : "rgba(255,255,255,0.3)",
-              },
+              styles.dbButton,
+              { backgroundColor: theme.buttonBackground },
             ]}
+            accessibilityLabel="View more on Pokemon DB"
+            onPress={() => {
+              const url = `https://pokemondb.net/pokedex/${pokemon.name}`;
+              Linking.openURL(url).catch((err) =>
+                console.log("Failed to open URL", err),
+              );
+            }}
           >
-            <Button
-              key={pokemon.pokedex}
-              title="More stats on PokemonDB"
-              color={
-                Platform.OS === "ios"
-                  ? theme.iconColorFocused
-                  : theme.buttonBackground
-              }
-              accessibilityLabel="View more on Pokemon DB"
-              onPress={() => {
-                const url = `https://pokemondb.net/pokedex/${pokemon.name}`;
-                Linking.openURL(url).catch((err) =>
-                  console.log("Failed to open URL", err),
-                );
-              }}
-            />
-          </View>
+            <Ionicons name="open-outline" size={18} color={theme.text} />
+            <Text style={[styles.dbButtonText, { color: theme.text }]}>
+              More stats on PokemonDB
+            </Text>
+          </Pressable>
         </View>
       )}
     </ScrollView>
@@ -433,12 +424,20 @@ const styles = StyleSheet.create({
     height: 140,
   },
 
-  buttonWrap: {
-    borderRadius: 40,
-    padding: 8,
+  dbButton: {
+    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    gap: 8,
     width: "100%",
+  },
+
+  dbButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
   },
 
   statRow: {

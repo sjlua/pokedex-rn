@@ -34,18 +34,18 @@ export default function TabsLayout() {
         tabBarStyle: { position: "absolute" },
 
         tabBarBackground: () => (
-          // see https://docs.expo.dev/versions/latest/sdk/blur-view/#experimentalblurmethod
-          // on why experimentalBlurMethod="dimezisBlurView" is used
+          // see https://docs.expo.dev/versions/latest/sdk/blur-view/#blurmethod
+          // on why blurMethod="dimezisBlurView" is used
           <BlurView
             tint="prominent"
             intensity={80}
             style={StyleSheet.absoluteFill}
-            experimentalBlurMethod="dimezisBlurView"
+            blurMethod="dimezisBlurView"
           />
         ),
         // EXPERIMENTAL
         // headerBackground: () => (
-        //     <BlurView tint="prominent" intensity={80} style={StyleSheet.absoluteFill} experimentalBlurMethod="dimezisBlurView" />
+        //     <BlurView tint="prominent" intensity={80} style={StyleSheet.absoluteFill} blurMethod="dimezisBlurView" />
         //   )
       }}
     >

@@ -1,9 +1,10 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
-  Button,
   Linking,
-  Platform,
+  Pressable,
+  StyleSheet,
   Text,
   useColorScheme,
   View,
@@ -45,20 +46,21 @@ export default function Info() {
       <Text style={{ fontSize: 20, color: theme.text }}>
         {`This is a test project made by me to learn React, React Native and Expo.\n\nHuge thanks to pokeapi.co, without them, this wouldn't be possible at all.`}
       </Text>
-      <Button
-        title={"Visit pokeapi.co"}
-        color={
-          Platform.OS === "ios"
-            ? theme.iconColorFocused
-            : theme.buttonBackground
-        }
+      <Pressable
+        style={[styles.linkButton, { backgroundColor: theme.uiBackground }]}
+        accessibilityLabel="Visit pokeapi.co"
         onPress={() => {
           const url = `https://pokeapi.co`;
           Linking.openURL(url).catch((err) =>
             console.log("Failed to open URL", err),
           );
         }}
-      ></Button>
+      >
+        <Ionicons name="open-outline" size={18} color={theme.text} />
+        <Text style={[styles.linkButtonText, { color: theme.text }]}>
+          Visit pokeapi.co
+        </Text>
+      </Pressable>
       <View style={{ marginTop: "auto" }}>
         <Text style={{ fontSize: 14, color: theme.title }}>
           {`Trainer Sean`}
@@ -67,3 +69,21 @@ export default function Info() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  linkButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+    gap: 8,
+    width: "100%",
+  },
+
+  linkButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+  },
+});

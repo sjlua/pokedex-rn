@@ -1,12 +1,12 @@
 import { Picker } from "@react-native-picker/picker";
 import { Text } from "@react-navigation/elements";
+import { Ionicons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-  Button,
   FlatList,
   Image,
-  Platform,
+  Pressable,
   StyleSheet,
   useColorScheme,
   View,
@@ -165,19 +165,26 @@ export default function Collection() {
               <Text style={[styles.question, { color: theme.text }]}>
                 {"Fly to another region?"}
               </Text>
-              <Button
-                title={viewRegionPicker ? "Close" : "Select"}
-                color={
-                  Platform.OS === "ios"
-                    ? theme.iconColorFocused
-                    : theme.buttonBackground
-                }
+              <Pressable
+                style={[
+                  styles.regionButton,
+                  { backgroundColor: theme.uiBackground },
+                ]}
                 onPress={() => showRegionPicker()}
-              />
+              >
+                <Ionicons
+                  name={viewRegionPicker ? "close-outline" : "earth-outline"}
+                  size={16}
+                  color={theme.text}
+                />
+                <Text style={[styles.regionButtonText, { color: theme.text }]}>
+                  {viewRegionPicker ? "Close" : "Select"}
+                </Text>
+              </Pressable>
             </View>
 
             {viewRegionPicker ? (
-              <View style={{ backgroundColor: theme.background }}>
+              <View style={{ backgroundColor: theme.uiBackground }}>
                 <Text style={[styles.smallQuestion, { color: theme.text }]}>
                   {
                     "By flying to another region, you can see all the Pokémon in that region, and beyond."
@@ -271,6 +278,20 @@ const styles = StyleSheet.create({
     gap: 5,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  regionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    gap: 6,
+  },
+
+  regionButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
   },
 
   smallQuestion: {

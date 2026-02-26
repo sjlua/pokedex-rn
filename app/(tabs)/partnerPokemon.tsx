@@ -253,7 +253,7 @@ export default function PartnerPokemon() {
             <View
               style={[
                 styles.searchBarContainer,
-                { backgroundColor: theme.navBackground },
+                { backgroundColor: theme.uiBackground },
               ]}
             >
               <Ionicons
@@ -306,7 +306,7 @@ export default function PartnerPokemon() {
               <View
                 style={[
                   styles.infoBox,
-                  { backgroundColor: theme.navBackground },
+                  { backgroundColor: theme.uiBackground },
                 ]}
               >
                 <Ionicons
@@ -333,7 +333,7 @@ export default function PartnerPokemon() {
                       key={example}
                       style={[
                         styles.exampleButton,
-                        { backgroundColor: theme.navBackground },
+                        { backgroundColor: theme.uiBackground },
                       ]}
                       onPress={() => {
                         setQuery(example);

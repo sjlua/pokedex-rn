@@ -175,7 +175,7 @@ export default function Search() {
             <View
               style={[
                 styles.searchBarContainer,
-                { backgroundColor: theme.navBackground },
+                { backgroundColor: theme.uiBackground },
               ]}
             >
               <Ionicons
@@ -228,7 +228,7 @@ export default function Search() {
               <View
                 style={[
                   styles.infoBox,
-                  { backgroundColor: theme.navBackground },
+                  { backgroundColor: theme.uiBackground },
                 ]}
               >
                 <Ionicons
@@ -253,7 +253,7 @@ export default function Search() {
                     key={example}
                     style={[
                       styles.exampleButton,
-                      { backgroundColor: theme.navBackground },
+                      { backgroundColor: theme.uiBackground },
                     ]}
                     onPress={() => {
                       setQuery(example);
@@ -319,11 +319,11 @@ export default function Search() {
               </Text>
             </View>
 
-            {/* New Search Bar */}
+            {/* Search again bar */}
             <View
               style={[
                 styles.searchBarContainer,
-                { backgroundColor: theme.navBackground },
+                { backgroundColor: theme.uiBackground },
               ]}
             >
               <Ionicons
@@ -427,7 +427,7 @@ export default function Search() {
                   color={theme.title}
                 />
                 <Text style={[styles.tapText, { color: theme.title }]}>
-                  Tap for details
+                  More
                 </Text>
               </View>
             </Link>

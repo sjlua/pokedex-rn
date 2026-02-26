@@ -7,7 +7,7 @@
     "icon": "./assets/images/icon.png",
     "scheme": "pokedex",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+
     "ios": {
       "supportsTablet": true
     },
@@ -17,7 +17,7 @@
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "edgeToEdgeEnabled": true,
+
       "predictiveBackGestureEnabled": false
     },
     "web": {
@@ -32,7 +32,8 @@
       "display": "standalone",
       "orientation": "portrait",
       "startUrl": "/dexern",
-      "scope": "/dexern"
+      "scope": "/dexern",
+      "baseUrl": "/dexern"
     },
     "plugins": [
       "expo-router",
@@ -47,12 +48,14 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-font",
+      "expo-image",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
-      "reactCompiler": true,
-      "baseUrl": "/dexern"
+      "reactCompiler": true
     }
   }
 }
