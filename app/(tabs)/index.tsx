@@ -1,6 +1,6 @@
 import { Picker } from "@react-native-picker/picker";
 import { Text } from "@react-navigation/elements";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -172,8 +172,8 @@ export default function Collection() {
                 ]}
                 onPress={() => showRegionPicker()}
               >
-                <Ionicons
-                  name={viewRegionPicker ? "close-outline" : "earth-outline"}
+                <MaterialIcons
+                  name={viewRegionPicker ? "close" : "language"}
                   size={16}
                   color={theme.text}
                 />
@@ -184,7 +184,14 @@ export default function Collection() {
             </View>
 
             {viewRegionPicker ? (
-              <View style={{ backgroundColor: theme.uiBackground }}>
+              <View
+                style={{
+                  backgroundColor: theme.uiBackground,
+                  borderRadius: 10,
+                  paddingTop: 10,
+                  marginTop: 10,
+                }}
+              >
                 <Text style={[styles.smallQuestion, { color: theme.text }]}>
                   {
                     "By flying to another region, you can see all the Pokémon in that region, and beyond."

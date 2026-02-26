@@ -15,7 +15,7 @@ import {
   View,
   Pressable,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
 import Head from "../../components/Head";
 
@@ -215,8 +215,8 @@ export default function Search() {
               <Text style={[styles.title, { color: theme.title }]}>
                 Search Pokémon
               </Text>
-              <Ionicons
-                name="globe-outline"
+              <MaterialIcons
+                name="language"
                 size={24}
                 color={theme.iconColorFocused}
               />
@@ -229,7 +229,7 @@ export default function Search() {
                 { backgroundColor: theme.uiBackground },
               ]}
             >
-              <Ionicons
+              <MaterialIcons
                 name="search"
                 size={18}
                 color={theme.subtext}
@@ -251,8 +251,8 @@ export default function Search() {
                   onPress={handleClearSearch}
                   style={styles.clearButton}
                 >
-                  <Ionicons
-                    name="close-circle-outline"
+                  <MaterialIcons
+                    name="cancel"
                     size={18}
                     color={theme.subtext}
                   />
@@ -268,7 +268,7 @@ export default function Search() {
               ]}
               onPress={handleSearch}
             >
-              <Ionicons name="search" size={18} color={theme.text} />
+              <MaterialIcons name="search" size={18} color={theme.text} />
               <Text style={[styles.searchButtonText, { color: theme.text }]}>
                 Search
               </Text>
@@ -282,8 +282,8 @@ export default function Search() {
                   { backgroundColor: theme.uiBackground },
                 ]}
               >
-                <Ionicons
-                  name="information-circle-outline"
+                <MaterialIcons
+                  name="info-outline"
                   size={24}
                   color={theme.iconColorFocused}
                 />
@@ -334,8 +334,8 @@ export default function Search() {
             {/* Header with Back Button */}
             <View style={styles.resultHeader}>
               <Pressable onPress={handleNewSearch} style={styles.backButton}>
-                <Ionicons
-                  name="chevron-back"
+                <MaterialIcons
+                  name="chevron-left"
                   size={24}
                   color={theme.iconColorFocused}
                 />
@@ -349,15 +349,19 @@ export default function Search() {
                 </Text>
               </Pressable>
               {isSearching && (
-                <Ionicons name="hourglass" size={20} color={theme.subtext} />
+                <MaterialIcons
+                  name="hourglass-empty"
+                  size={20}
+                  color={theme.subtext}
+                />
               )}
             </View>
 
             {/* Change Partner Section Header */}
             <View style={styles.searchSection}>
               <View style={styles.searchSectionHeader}>
-                <Ionicons
-                  name="search-circle-outline"
+                <MaterialIcons
+                  name="search"
                   size={20}
                   color={theme.iconColorFocused}
                 />
@@ -377,7 +381,7 @@ export default function Search() {
                 { backgroundColor: theme.uiBackground },
               ]}
             >
-              <Ionicons
+              <MaterialIcons
                 name="search"
                 size={18}
                 color={theme.subtext}
@@ -399,8 +403,8 @@ export default function Search() {
                   onPress={handleClearSearch}
                   style={styles.clearButton}
                 >
-                  <Ionicons
-                    name="close-circle-outline"
+                  <MaterialIcons
+                    name="cancel"
                     size={18}
                     color={theme.subtext}
                   />
@@ -416,7 +420,7 @@ export default function Search() {
                 ]}
                 onPress={handleSearch}
               >
-                <Ionicons name="search" size={18} color={theme.text} />
+                <MaterialIcons name="search" size={18} color={theme.text} />
                 <Text style={[styles.searchButtonText, { color: theme.text }]}>
                   Search
                 </Text>
@@ -460,8 +464,8 @@ export default function Search() {
                         : "Set as partner Pokémon"
                     }
                   >
-                    <Ionicons
-                      name={isPartner ? "heart" : "heart-outline"}
+                    <MaterialIcons
+                      name={isPartner ? "favorite" : "favorite-border"}
                       size={20}
                       color={isPartner ? "#ff4444" : theme.title}
                     />

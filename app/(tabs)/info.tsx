@@ -1,5 +1,5 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
   Linking,
@@ -56,7 +56,7 @@ export default function Info() {
           );
         }}
       >
-        <Ionicons name="open-outline" size={18} color={theme.text} />
+        <MaterialIcons name="open-in-new" size={18} color={theme.text} />
         <Text style={[styles.linkButtonText, { color: theme.text }]}>
           Visit pokeapi.co
         </Text>

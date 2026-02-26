@@ -2,6 +2,7 @@ import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Link } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
+import { MaterialIcons } from "@expo/vector-icons";
 import {
   Alert,
   Image,
@@ -17,7 +18,6 @@ import {
   Pressable,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Ionicons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
 import Head from "../../components/Head";
 
@@ -246,8 +246,8 @@ export default function PartnerPokemon() {
               <Text style={[styles.title, { color: theme.title }]}>
                 Partner Pokémon
               </Text>
-              <Ionicons
-                name="heart-outline"
+              <MaterialIcons
+                name="favorite-border"
                 size={28}
                 color={theme.iconColorFocused}
               />
@@ -260,7 +260,7 @@ export default function PartnerPokemon() {
                 { backgroundColor: theme.uiBackground },
               ]}
             >
-              <Ionicons
+              <MaterialIcons
                 name="search"
                 size={18}
                 color={theme.subtext}
@@ -282,8 +282,8 @@ export default function PartnerPokemon() {
                   onPress={handleClearSearch}
                   style={styles.clearButton}
                 >
-                  <Ionicons
-                    name="close-circle-outline"
+                  <MaterialIcons
+                    name="cancel"
                     size={18}
                     color={theme.subtext}
                   />
@@ -299,7 +299,7 @@ export default function PartnerPokemon() {
               ]}
               onPress={handleSearch}
             >
-              <Ionicons name="search" size={18} color={theme.text} />
+              <MaterialIcons name="search" size={18} color={theme.text} />
               <Text style={[styles.searchButtonText, { color: theme.text }]}>
                 Choose Partner
               </Text>
@@ -313,8 +313,8 @@ export default function PartnerPokemon() {
                   { backgroundColor: theme.uiBackground },
                 ]}
               >
-                <Ionicons
-                  name="information-circle-outline"
+                <MaterialIcons
+                  name="info-outline"
                   size={24}
                   color={theme.iconColorFocused}
                 />
@@ -370,8 +370,8 @@ export default function PartnerPokemon() {
             {/* Header with Back Button */}
             <View style={styles.resultHeader}>
               <Pressable onPress={handleNewPartner} style={styles.backButton}>
-                <Ionicons
-                  name="chevron-back"
+                <MaterialIcons
+                  name="chevron-left"
                   size={24}
                   color={theme.iconColorFocused}
                 />
@@ -385,7 +385,11 @@ export default function PartnerPokemon() {
                 </Text>
               </Pressable>
               {isLoading && (
-                <Ionicons name="hourglass" size={20} color={theme.subtext} />
+                <MaterialIcons
+                  name="hourglass-empty"
+                  size={20}
+                  color={theme.subtext}
+                />
               )}
             </View>
 
@@ -417,8 +421,8 @@ export default function PartnerPokemon() {
                       #{favouriteMon.pokedex}
                     </Text>
                   </View>
-                  <Ionicons
-                    name="heart"
+                  <MaterialIcons
+                    name="favorite"
                     size={32}
                     color={theme.title}
                     style={{ opacity: 0.8 }}
@@ -445,8 +449,8 @@ export default function PartnerPokemon() {
                 {/* Shiny Toggle */}
                 <View style={styles.shinyToggleRow}>
                   <View style={styles.shinyLabelContainer}>
-                    <Ionicons
-                      name={boolShowShiny ? "sparkles" : "image-outline"}
+                    <MaterialIcons
+                      name={boolShowShiny ? "auto-awesome" : "image"}
                       size={18}
                       color={theme.title}
                     />
@@ -481,8 +485,8 @@ export default function PartnerPokemon() {
             {/* Change Partner Section Header */}
             <View style={styles.changeSection}>
               <View style={styles.changeSectionHeader}>
-                <Ionicons
-                  name="swap-vertical"
+                <MaterialIcons
+                  name="swap-vert"
                   size={20}
                   color={theme.iconColorFocused}
                 />
@@ -502,7 +506,7 @@ export default function PartnerPokemon() {
                 { backgroundColor: theme.uiBackground },
               ]}
             >
-              <Ionicons
+              <MaterialIcons
                 name="search"
                 size={18}
                 color={theme.subtext}
@@ -524,8 +528,8 @@ export default function PartnerPokemon() {
                   onPress={handleClearSearch}
                   style={styles.clearButton}
                 >
-                  <Ionicons
-                    name="close-circle-outline"
+                  <MaterialIcons
+                    name="cancel"
                     size={18}
                     color={theme.subtext}
                   />
@@ -541,7 +545,7 @@ export default function PartnerPokemon() {
                 ]}
                 onPress={handleSearch}
               >
-                <Ionicons name="search" size={18} color={theme.text} />
+                <MaterialIcons name="search" size={18} color={theme.text} />
                 <Text style={[styles.searchButtonText, { color: theme.text }]}>
                   Change Partner
                 </Text>

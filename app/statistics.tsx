@@ -14,7 +14,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Colours } from "../constants/colours";
 
 interface Pokemon {
@@ -331,7 +331,7 @@ export default function Statistics() {
               );
             }}
           >
-            <Ionicons name="open-outline" size={18} color={theme.text} />
+            <MaterialIcons name="open-in-new" size={18} color={theme.text} />
             <Text style={[styles.dbButtonText, { color: theme.text }]}>
               More stats on PokemonDB
             </Text>
