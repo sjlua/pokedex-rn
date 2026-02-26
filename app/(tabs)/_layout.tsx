@@ -1,8 +1,6 @@
-import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
-import { Tabs } from "expo-router";
+import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useEffect, useState } from "react";
-import { StyleSheet, useColorScheme, View } from "react-native";
+import { useColorScheme, View } from "react-native";
 import { Colours } from "../../constants/colours";
 
 export default function TabsLayout() {
@@ -24,70 +22,44 @@ export default function TabsLayout() {
   }
 
   return (
-    <Tabs
-      screenOptions={{
-        headerStyle: { backgroundColor: theme.navBackground },
-        headerTintColor: theme.title,
-        headerTitleAlign: "center",
-        tabBarActiveTintColor: theme.iconColorFocused,
-        tabBarInactiveTintColor: theme.iconColor,
-        tabBarStyle: { position: "absolute" },
-
-        tabBarBackground: () => (
-          // see https://docs.expo.dev/versions/latest/sdk/blur-view/#blurmethod
-          // on why blurMethod="dimezisBlurView" is used
-          <BlurView
-            tint="prominent"
-            intensity={80}
-            style={StyleSheet.absoluteFill}
-            blurMethod="dimezisBlurView"
-          />
-        ),
-        // EXPERIMENTAL
-        // headerBackground: () => (
-        //     <BlurView tint="prominent" intensity={80} style={StyleSheet.absoluteFill} blurMethod="dimezisBlurView" />
-        //   )
+    <NativeTabs
+      iconColor={{
+        default: theme.iconColor,
+        selected: theme.iconColorFocused,
       }}
     >
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Dexern",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialCommunityIcons name="pokeball" size={size} color={color} />
-          ),
-        }}
-      />
+      {/* Dexern — no pokeball SF symbol exists, book.closed is the closest (like a Pokédex) */}
+      <NativeTabs.Trigger name="index">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "book.closed", selected: "book.closed.fill" }}
+          md="menu_book"
+        />
+        <NativeTabs.Trigger.Label>Dexern</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="search"
-        options={{
-          title: "Search",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="search" size={size} color={color} />
-          ),
-        }}
-      />
+      <NativeTabs.Trigger name="search">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "magnifyingglass", selected: "magnifyingglass" }}
+          md="search"
+        />
+        <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="partnerPokemon"
-        options={{
-          title: "My Partner",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="favorite-border" size={size} color={color} />
-          ),
-        }}
-      />
+      <NativeTabs.Trigger name="partnerPokemon">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "heart", selected: "heart.fill" }}
+          md="favorite"
+        />
+        <NativeTabs.Trigger.Label>My Partner</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
 
-      <Tabs.Screen
-        name="info"
-        options={{
-          title: "App Info",
-          tabBarIcon: ({ color, size }) => (
-            <MaterialIcons name="info-outline" size={size} color={color} />
-          ),
-        }}
-      />
-    </Tabs>
+      <NativeTabs.Trigger name="info">
+        <NativeTabs.Trigger.Icon
+          sf={{ default: "info.circle", selected: "info.circle.fill" }}
+          md="info_outline"
+        />
+        <NativeTabs.Trigger.Label>App Info</NativeTabs.Trigger.Label>
+      </NativeTabs.Trigger>
+    </NativeTabs>
   );
 }

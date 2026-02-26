@@ -1,4 +1,4 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { useFocusEffect } from "@react-navigation/native";
 import { useCallback, useEffect, useState } from "react";
@@ -63,8 +63,7 @@ const STORAGE_KEYS = {
 };
 
 export default function PartnerPokemon() {
-  const bottomBarTabHeight = useBottomTabBarHeight();
-
+  const [isChangeOpen, setIsChangeOpen] = useState<boolean>(false);
   const [query, setQuery] = useState<string>("");
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [favouriteMon, setFavouriteMon] = useState<Pokemon | null>(null);
@@ -213,32 +212,23 @@ export default function PartnerPokemon() {
     setQuery("");
   };
 
-  const handleNewPartner = async () => {
-    setFavouriteMon(null);
-    setSelectedName(null);
-    setQuery("");
-    // Clear saved partner from storage
-    try {
-      await AsyncStorage.removeItem(STORAGE_KEYS.PARTNER_POKEMON);
-    } catch (e) {
-      console.log("Error clearing saved partner:", e);
-    }
-  };
-
   return (
     <>
       <Head
         title="My Partner Pokémon - Dexern"
         description="Choose and view your partner Pokémon companion"
       />
-      <View style={{ backgroundColor: theme.background, flex: 1 }}>
+      <SafeAreaView
+        edges={["top"]}
+        style={{ backgroundColor: theme.background, flex: 1 }}
+      >
         {!favouriteMon ? (
           <ScrollView
             keyboardDismissMode="on-drag"
             contentContainerStyle={{
               gap: 20,
               padding: 16,
-              paddingBottom: 16 + bottomBarTabHeight,
+              paddingBottom: 16,
             }}
           >
             {/* Header */}
@@ -364,34 +354,17 @@ export default function PartnerPokemon() {
             contentContainerStyle={{
               gap: 16,
               padding: 16,
-              paddingBottom: 16 + bottomBarTabHeight,
+              paddingBottom: 16,
             }}
           >
-            {/* Header with Back Button */}
-            <View style={styles.resultHeader}>
-              <Pressable onPress={handleNewPartner} style={styles.backButton}>
-                <MaterialIcons
-                  name="chevron-left"
-                  size={24}
-                  color={theme.iconColorFocused}
-                />
-                <Text
-                  style={[
-                    styles.backButtonText,
-                    { color: theme.iconColorFocused },
-                  ]}
-                >
-                  Back
-                </Text>
-              </Pressable>
-              {isLoading && (
-                <MaterialIcons
-                  name="hourglass-empty"
-                  size={20}
-                  color={theme.subtext}
-                />
-              )}
-            </View>
+            {/* Loading indicator */}
+            {isLoading && (
+              <MaterialIcons
+                name="hourglass-empty"
+                size={20}
+                color={theme.subtext}
+              />
+            )}
 
             {/* Partner Pokemon Card */}
             <Link
@@ -482,78 +455,140 @@ export default function PartnerPokemon() {
               </View>
             </Link>
 
-            {/* Change Partner Section Header */}
-            <View style={styles.changeSection}>
-              <View style={styles.changeSectionHeader}>
-                <MaterialIcons
-                  name="swap-vert"
-                  size={20}
-                  color={theme.iconColorFocused}
-                />
-                <Text style={[styles.changeTitle, { color: theme.title }]}>
-                  Change Your Partner
-                </Text>
-              </View>
-              <Text style={[styles.changeSubtitle, { color: theme.subtext }]}>
-                Select a different Pokémon to be your new partner
-              </Text>
-            </View>
-
-            {/* Change Partner Search Bar */}
+            {/* Change Partner Dropdown */}
             <View
               style={[
-                styles.searchBarContainer,
+                styles.changeDropdown,
                 { backgroundColor: theme.uiBackground },
               ]}
             >
-              <MaterialIcons
-                name="search"
-                size={18}
-                color={theme.subtext}
-                style={styles.searchIcon}
-              />
-              <TextInput
-                placeholder="Choose another..."
-                placeholderTextColor={theme.subtext}
-                value={query}
-                style={[styles.searchInput, { color: theme.text }]}
-                onChangeText={setQuery}
-                onSubmitEditing={handleSearch}
-                autoCapitalize="none"
-                returnKeyType="search"
-                selectionColor={theme.selectionColour}
-              />
-              {query.length > 0 && (
-                <Pressable
-                  onPress={handleClearSearch}
-                  style={styles.clearButton}
-                >
+              {/* Dropdown Header / Toggle */}
+              <Pressable
+                style={styles.changeDropdownHeader}
+                onPress={() => {
+                  setIsChangeOpen((prev) => !prev);
+                  setQuery("");
+                }}
+              >
+                <View style={styles.changeSectionHeader}>
                   <MaterialIcons
-                    name="cancel"
-                    size={18}
-                    color={theme.subtext}
+                    name="swap-vert"
+                    size={20}
+                    color={theme.iconColorFocused}
                   />
-                </Pressable>
+                  <Text style={[styles.changeTitle, { color: theme.title }]}>
+                    Change Your Partner
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name={isChangeOpen ? "expand-less" : "expand-more"}
+                  size={24}
+                  color={theme.subtext}
+                />
+              </Pressable>
+
+              {/* Dropdown Body */}
+              {isChangeOpen && (
+                <View style={styles.changeDropdownBody}>
+                  {/* Search Bar */}
+                  <View
+                    style={[
+                      styles.searchBarContainer,
+                      { backgroundColor: theme.navBackground },
+                    ]}
+                  >
+                    <MaterialIcons
+                      name="search"
+                      size={18}
+                      color={theme.subtext}
+                      style={styles.searchIcon}
+                    />
+                    <TextInput
+                      placeholder="Choose another..."
+                      placeholderTextColor={theme.subtext}
+                      value={query}
+                      style={[styles.searchInput, { color: theme.text }]}
+                      onChangeText={setQuery}
+                      onSubmitEditing={handleSearch}
+                      autoCapitalize="none"
+                      returnKeyType="search"
+                      selectionColor={theme.selectionColour}
+                    />
+                    {query.length > 0 && (
+                      <Pressable
+                        onPress={handleClearSearch}
+                        style={styles.clearButton}
+                      >
+                        <MaterialIcons
+                          name="cancel"
+                          size={18}
+                          color={theme.subtext}
+                        />
+                      </Pressable>
+                    )}
+                  </View>
+
+                  {/* Search Button */}
+                  {query.length > 0 && (
+                    <Pressable
+                      style={[
+                        styles.searchButton,
+                        { backgroundColor: theme.buttonBackground },
+                      ]}
+                      onPress={handleSearch}
+                    >
+                      <MaterialIcons
+                        name="search"
+                        size={18}
+                        color={theme.text}
+                      />
+                      <Text
+                        style={[styles.searchButtonText, { color: theme.text }]}
+                      >
+                        Change Partner
+                      </Text>
+                    </Pressable>
+                  )}
+
+                  {/* Recommendations */}
+                  <Text
+                    style={[styles.changeSubtitle, { color: theme.subtext }]}
+                  >
+                    Popular choices
+                  </Text>
+                  <View style={styles.examplesGrid}>
+                    {["pikachu", "charizard", "blastoise", "venusaur"].map(
+                      (example) => (
+                        <Pressable
+                          key={example}
+                          style={[
+                            styles.exampleButton,
+                            { backgroundColor: theme.navBackground },
+                          ]}
+                          onPress={() => {
+                            setQuery(example);
+                            setSelectedName(example);
+                            setIsChangeOpen(false);
+                          }}
+                        >
+                          <Text
+                            style={[
+                              styles.exampleButtonText,
+                              { color: theme.text },
+                            ]}
+                          >
+                            {example}
+                          </Text>
+                        </Pressable>
+                      ),
+                    )}
+                  </View>
+                </View>
               )}
             </View>
-
-            {query.length > 0 && (
-              <Pressable
-                style={[
-                  styles.searchButton,
-                  { backgroundColor: theme.buttonBackground },
-                ]}
-                onPress={handleSearch}
-              >
-                <MaterialIcons name="search" size={18} color={theme.text} />
-                <Text style={[styles.searchButtonText, { color: theme.text }]}>
-                  Change Partner
-                </Text>
-              </Pressable>
-            )}
           </ScrollView>
         )}
-      </View>
+      </SafeAreaView>
     </>
   );
 }
@@ -656,24 +691,6 @@ const styles = StyleSheet.create({
     fontWeight: "500",
   },
 
-  resultHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    marginBottom: 8,
-  },
-
-  backButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 4,
-  },
-
-  backButtonText: {
-    fontSize: 16,
-    fontWeight: "500",
-  },
-
   pokemonCard: {
     borderRadius: 16,
     padding: 20,
@@ -755,8 +772,22 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
 
-  changeSection: {
-    gap: 8,
+  changeDropdown: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+
+  changeDropdownHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: 14,
+  },
+
+  changeDropdownBody: {
+    gap: 12,
+    paddingHorizontal: 14,
+    paddingBottom: 14,
   },
 
   changeSectionHeader: {

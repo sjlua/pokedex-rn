@@ -11,6 +11,7 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 import { Colours } from "../../constants/colours";
 
@@ -140,7 +141,10 @@ export default function Collection() {
 
   return (
     // replaces standard unscrollable view with scrollable
-    <View style={{ flex: 1, backgroundColor: theme.background }}>
+    <SafeAreaView
+      edges={["top"]}
+      style={{ flex: 1, backgroundColor: theme.background }}
+    >
       <FlatList
         data={listPokemon}
         numColumns={3}
@@ -269,7 +273,7 @@ export default function Collection() {
         )}
         keyExtractor={(item) => item.name}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 

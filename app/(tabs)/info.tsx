@@ -1,4 +1,3 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import {
@@ -9,11 +8,10 @@ import {
   useColorScheme,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Colours } from "../../constants/colours";
 
 export default function Info() {
-  const bottomBarTabHeight = useBottomTabBarHeight();
-
   // Force re-render to fix color scheme detection on initial load
   const [mounted, setMounted] = useState<boolean>(false);
 
@@ -32,14 +30,14 @@ export default function Info() {
   }
 
   return (
-    <View
+    <SafeAreaView
+      edges={["top", "bottom"]}
       style={{
         flex: 1,
         justifyContent: "flex-start",
         alignItems: "center",
         gap: 10,
         padding: 10,
-        paddingBottom: 10 + bottomBarTabHeight,
         backgroundColor: theme.background,
       }}
     >
@@ -66,7 +64,7 @@ export default function Info() {
           {`Trainer Sean`}
         </Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 

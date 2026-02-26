@@ -1,5 +1,5 @@
-import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -61,8 +61,6 @@ const bgColourByType: Record<string, string> = {
 };
 
 export default function Search() {
-  const bottomBarTabHeight = useBottomTabBarHeight();
-
   const [query, setQuery] = useState<string>("");
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
@@ -200,14 +198,16 @@ export default function Search() {
         title="Search Pokémon - Dexern"
         description="Search and discover information about any Pokémon by name or Pokédex number"
       />
-      <View style={{ backgroundColor: theme.background, flex: 1 }}>
+      <SafeAreaView
+        edges={["top"]}
+        style={{ backgroundColor: theme.background, flex: 1 }}
+      >
         {!selectedPokemon ? (
           <ScrollView
             keyboardDismissMode="on-drag"
             contentContainerStyle={{
               gap: 20,
               padding: 16,
-              paddingBottom: 16 + bottomBarTabHeight,
             }}
           >
             {/* Header */}
@@ -296,7 +296,7 @@ export default function Search() {
             {/* Examples */}
             <View style={styles.examplesSection}>
               <Text style={[styles.examplesTitle, { color: theme.text }]}>
-                Examples
+                Popular Pokémon
               </Text>
               <View style={styles.examplesGrid}>
                 {["pikachu", "25", "charizard", "6"].map((example) => (
@@ -328,7 +328,6 @@ export default function Search() {
             contentContainerStyle={{
               gap: 16,
               padding: 16,
-              paddingBottom: 16 + bottomBarTabHeight,
             }}
           >
             {/* Header with Back Button */}
@@ -498,7 +497,7 @@ export default function Search() {
             </Link>
           </ScrollView>
         )}
-      </View>
+      </SafeAreaView>
     </>
   );
 }
