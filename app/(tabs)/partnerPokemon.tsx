@@ -1,3 +1,4 @@
+import * as Haptics from "expo-haptics";
 import {
   SafeAreaView,
   useSafeAreaInsets,
@@ -122,6 +123,7 @@ function TrainerCard({
             },
           ]}
           onPress={() => {
+            Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             Keyboard.dismiss();
             onRegionToggle();
           }}
@@ -158,7 +160,10 @@ function TrainerCard({
             return (
               <Pressable
                 key={region}
-                onPress={() => onRegionSelect(region)}
+                onPress={() => {
+                  Haptics.selectionAsync();
+                  onRegionSelect(region);
+                }}
                 style={({ pressed }) => [
                   styles.regionListRow,
                   !isLast && {
@@ -451,6 +456,7 @@ export default function PartnerPokemon() {
               <Pressable
                 style={styles.changeDropdownHeader}
                 onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   setIsChangeOpen((prev) => !prev);
                   setQuery("");
                 }}
@@ -551,6 +557,7 @@ export default function PartnerPokemon() {
                             { backgroundColor: theme.navBackground },
                           ]}
                           onPress={() => {
+                            Haptics.selectionAsync();
                             setQuery(example);
                             setSelectedName(example);
                             setIsChangeOpen(false);
@@ -611,6 +618,9 @@ export default function PartnerPokemon() {
                 pathname: "/statistics",
                 params: { name: favouriteMon.name },
               }}
+              onPress={() =>
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+              }
               style={[
                 styles.pokemonCard,
                 {
@@ -672,7 +682,10 @@ export default function PartnerPokemon() {
                   </View>
                   <Switch
                     value={boolShowShiny}
-                    onValueChange={(next: boolean) => setShowStatus(next)}
+                    onValueChange={(next: boolean) => {
+                      Haptics.selectionAsync();
+                      setShowStatus(next);
+                    }}
                     accessibilityLabel="Toggle shiny form"
                   />
                 </View>
@@ -694,7 +707,7 @@ export default function PartnerPokemon() {
               </View>
             </Link>
 
-            {/* Change Partner Dropdown */}
+            {/* Change Partner Dropdown — "Change Your Partner" variant */}
             <View
               style={[
                 styles.changeDropdown,
@@ -705,6 +718,7 @@ export default function PartnerPokemon() {
               <Pressable
                 style={styles.changeDropdownHeader}
                 onPress={() => {
+                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
                   setIsChangeOpen((prev) => !prev);
                   setQuery("");
                 }}
@@ -805,6 +819,7 @@ export default function PartnerPokemon() {
                             { backgroundColor: theme.navBackground },
                           ]}
                           onPress={() => {
+                            Haptics.selectionAsync();
                             setQuery(example);
                             setSelectedName(example);
                             setIsChangeOpen(false);

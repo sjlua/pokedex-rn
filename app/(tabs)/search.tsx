@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Haptics from "expo-haptics";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
@@ -149,6 +150,7 @@ export default function Search() {
 
   const handleSearch = () => {
     if (!query.trim()) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedName(query.trim());
     setQuery("");
   };
@@ -158,6 +160,7 @@ export default function Search() {
   };
 
   const handleNewSearch = () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setPokemon(null);
     setSelectedName(null);
     setQuery("");
@@ -166,6 +169,7 @@ export default function Search() {
 
   const handleTogglePartner = async () => {
     if (!selectedPokemon) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     if (isPartner) {
       // Remove as partner
       await AsyncStorage.removeItem(STORAGE_KEYS.PARTNER_POKEMON);
@@ -307,6 +311,7 @@ export default function Search() {
                       { backgroundColor: theme.uiBackground },
                     ]}
                     onPress={() => {
+                      Haptics.selectionAsync();
                       setQuery(example);
                       setSelectedName(example);
                     }}
@@ -433,6 +438,9 @@ export default function Search() {
                 pathname: "/statistics",
                 params: { name: selectedPokemon.name },
               }}
+              onPress={() =>
+                Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+              }
               style={[
                 styles.pokemonCard,
                 {

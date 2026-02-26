@@ -1,6 +1,7 @@
 import { Picker } from "@react-native-picker/picker";
 import { Text } from "@react-navigation/elements";
 import { MaterialIcons } from "@expo/vector-icons";
+import * as Haptics from "expo-haptics";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -131,6 +132,7 @@ export default function Collection() {
   };
 
   const showRegionPicker = async () => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     viewRegionPicker ? setRegionPicker(false) : setRegionPicker(true);
   };
 
@@ -205,6 +207,7 @@ export default function Collection() {
                   style={{ color: theme.text }}
                   selectedValue={selectedRegion}
                   onValueChange={(itemValue, _) => {
+                    Haptics.selectionAsync();
                     setRegion(itemValue);
                     setCurrentPage(0);
                   }}
@@ -229,6 +232,9 @@ export default function Collection() {
           <Link
             key={item.name}
             href={{ pathname: "/statistics", params: { name: item.name } }}
+            onPress={() =>
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
+            }
             style={[
               styles.cardLayout,
               {
