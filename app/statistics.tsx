@@ -29,6 +29,7 @@ interface Pokemon {
   types: PokemonTypeObject[];
   abilities: PokemonAbilityObject[];
   stats: PokemonStats;
+  moves: PokemonMoveObject[];
 }
 
 interface PokemonTypeObject {
@@ -40,6 +41,13 @@ interface PokemonTypeObject {
 interface PokemonAbilityObject {
   ability: {
     name: string;
+  };
+}
+
+interface PokemonMoveObject {
+  move: {
+    name: string;
+    url: string;
   };
 }
 
@@ -131,6 +139,7 @@ export default function Statistics() {
   const [pokemon, setPokemon] = useState<Pokemon | null>(null);
   const [slideAnim] = useState(new Animated.Value(50));
   const [mounted, setMounted] = useState<boolean>(false);
+  const [movesExpanded, setMovesExpanded] = useState<boolean>(false);
   const colourScheme: "light" | "dark" =
     useColorScheme() === "dark" ? "dark" : "light";
   const theme = Colours[colourScheme];
@@ -177,6 +186,7 @@ export default function Statistics() {
         imageFrontShinyLink: jsonData.sprites.front_shiny,
         types: jsonData.types,
         abilities: jsonData.abilities,
+        moves: jsonData.moves,
         stats: {
           hp: jsonData.stats[0].base_stat,
           attack: jsonData.stats[1].base_stat,
@@ -504,6 +514,49 @@ export default function Statistics() {
             </View>
           </SectionCard>
 
+          {/* ── Moves ── */}
+          <SectionCard icon="sports-martial-arts" title="Moves">
+            <Pressable
+              style={[
+                styles.movesToggle,
+                { backgroundColor: subtleBg, borderColor: cardBorder },
+              ]}
+              onPress={() => setMovesExpanded((prev) => !prev)}
+            >
+              <Text style={[styles.movesToggleText, { color: theme.text }]}>
+                {pokemon.moves.length} learnable moves
+              </Text>
+              <MaterialIcons
+                name={movesExpanded ? "expand-less" : "expand-more"}
+                size={20}
+                color={theme.subtext}
+              />
+            </Pressable>
+
+            {movesExpanded && (
+              <View style={styles.movesList}>
+                {pokemon.moves.map((m) => (
+                  <View
+                    key={m.move.name}
+                    style={[styles.moveRow, { borderBottomColor: cardBorder }]}
+                  >
+                    <MaterialIcons
+                      name="flash-on"
+                      size={14}
+                      color={accentColour}
+                    />
+                    <Text style={[styles.moveText, { color: theme.text }]}>
+                      {m.move.name
+                        .split("-")
+                        .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                        .join(" ")}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            )}
+          </SectionCard>
+
           {/* ── External Link ── */}
           <Pressable
             style={({ pressed }) => [
@@ -792,5 +845,41 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     color: "#fff",
+  },
+
+  // ── Moves ─────────────────────────────────────────────────────────────────
+
+  movesToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+
+  movesToggleText: {
+    fontSize: 14,
+    fontWeight: "600",
+  },
+
+  movesList: {
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+
+  moveRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingVertical: 9,
+    paddingHorizontal: 4,
+    borderBottomWidth: 1,
+  },
+
+  moveText: {
+    fontSize: 14,
+    fontWeight: "500",
   },
 });
