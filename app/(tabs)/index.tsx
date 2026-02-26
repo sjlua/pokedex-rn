@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   questionRow: {
     flexDirection: "row",
     width: "100%",
-    gap: 5,
+    gap: 10,
     justifyContent: "center",
     alignItems: "center",
   },

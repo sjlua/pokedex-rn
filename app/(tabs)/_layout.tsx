@@ -1,24 +1,73 @@
+import { Tabs } from "expo-router";
 import { NativeTabs } from "expo-router/unstable-native-tabs";
 import { useEffect, useState } from "react";
-import { useColorScheme, View } from "react-native";
+import { Platform, useColorScheme, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
 
 export default function TabsLayout() {
-  // Force re-render to fix color scheme detection on initial load
   const [mounted, setMounted] = useState<boolean>(false);
 
-  // Get the colour scheme from app.json userInterfaceStyle, null fallback is light
-  const colourScheme = useColorScheme() ?? "light";
+  const colourScheme: "light" | "dark" =
+    useColorScheme() === "dark" ? "dark" : "light";
   const theme = Colours[colourScheme];
 
-  // useEffect to handle initial mount for color scheme detection
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Don't render until color scheme is properly detected
   if (!mounted) {
     return <View style={{ flex: 1, backgroundColor: theme.background }} />;
+  }
+
+  if (Platform.OS === "web") {
+    return (
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: theme.iconColorFocused,
+          tabBarInactiveTintColor: theme.iconColor,
+          tabBarStyle: { backgroundColor: theme.navBackground },
+        }}
+      >
+        <Tabs.Screen
+          name="index"
+          options={{
+            title: "Dexern",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="menu-book" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="search"
+          options={{
+            title: "Search",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="search" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="partnerPokemon"
+          options={{
+            title: "My Partner",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="favorite" size={size} color={color} />
+            ),
+          }}
+        />
+        <Tabs.Screen
+          name="info"
+          options={{
+            title: "App Info",
+            tabBarIcon: ({ color, size }) => (
+              <MaterialIcons name="info-outline" size={size} color={color} />
+            ),
+          }}
+        />
+      </Tabs>
+    );
   }
 
   return (
@@ -28,7 +77,6 @@ export default function TabsLayout() {
         selected: theme.iconColorFocused,
       }}
     >
-      {/* Dexern — no pokeball SF symbol exists, book.closed is the closest (like a Pokédex) */}
       <NativeTabs.Trigger name="index">
         <NativeTabs.Trigger.Icon
           sf={{ default: "book.closed", selected: "book.closed.fill" }}
