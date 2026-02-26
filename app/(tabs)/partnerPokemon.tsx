@@ -1,5 +1,7 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import { useEffect, useState } from "react";
+import { Link } from "expo-router";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect, useState } from "react";
 import {
   Alert,
   Image,
@@ -80,12 +82,14 @@ export default function PartnerPokemon() {
     setMounted(true);
   }, []);
 
-  // Load saved partner Pokemon on mount
-  useEffect(() => {
-    if (mounted) {
-      loadSavedPartner();
-    }
-  }, [mounted]);
+  // Reload saved partner every time the tab is focused
+  useFocusEffect(
+    useCallback(() => {
+      if (mounted) {
+        loadSavedPartner();
+      }
+    }, [mounted]),
+  );
 
   // Fetch new Pokemon when selectedName changes
   useEffect(() => {
@@ -386,12 +390,17 @@ export default function PartnerPokemon() {
             </View>
 
             {/* Partner Pokemon Card */}
-            <View
+            <Link
+              href={{
+                pathname: "/statistics",
+                params: { name: favouriteMon.name },
+              }}
               style={[
                 styles.pokemonCard,
                 {
                   backgroundColor:
                     bgColourByType[favouriteMon.types[0].type.name] + 70,
+                  width: "100%",
                 },
               ]}
             >
@@ -467,7 +476,7 @@ export default function PartnerPokemon() {
                   )}
                 </View>
               </View>
-            </View>
+            </Link>
 
             {/* Change Partner Section Header */}
             <View style={styles.changeSection}>
@@ -490,7 +499,7 @@ export default function PartnerPokemon() {
             <View
               style={[
                 styles.searchBarContainer,
-                { backgroundColor: theme.navBackground },
+                { backgroundColor: theme.uiBackground },
               ]}
             >
               <Ionicons
@@ -664,17 +673,19 @@ const styles = StyleSheet.create({
   pokemonCard: {
     borderRadius: 16,
     padding: 20,
-    gap: 16,
+    gap: 0,
   },
 
   pokemonCardContent: {
     gap: 12,
+    width: "100%",
   },
 
   nameSection: {
     flexDirection: "row",
     justifyContent: "space-between",
-    alignItems: "center",
+    alignItems: "flex-start",
+    marginBottom: 8,
   },
 
   pokemonName: {
@@ -693,6 +704,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 8,
     flexWrap: "wrap",
+    marginBottom: 8,
   },
 
   typeTag: {
@@ -711,7 +723,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 8,
+    paddingVertical: 4,
+    marginBottom: 4,
   },
 
   shinyLabelContainer: {
@@ -728,13 +741,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     alignItems: "center",
     justifyContent: "center",
-    paddingVertical: 16,
+    paddingVertical: 24,
   },
 
   pokemonImage: {
-    width: 180,
-    height: 180,
+    width: 200,
+    height: 200,
     resizeMode: "contain",
+    alignSelf: "center",
   },
 
   changeSection: {

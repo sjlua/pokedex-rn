@@ -1,4 +1,5 @@
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Link } from "expo-router";
 import { useEffect, useState } from "react";
 import {
@@ -18,9 +19,16 @@ import { Ionicons } from "@expo/vector-icons";
 import { Colours } from "../../constants/colours";
 import Head from "../../components/Head";
 
+const STORAGE_KEYS = {
+  PARTNER_POKEMON: "@partner_pokemon",
+  SHINY_PREFERENCE: "@shiny_preference",
+};
+
 interface Pokemon {
+  pokedex: number | null;
   name: string;
   imageFrontLink: string;
+  imageFrontShinyLink: string | null;
   types: PokemonTypeObject[];
 }
 
@@ -59,9 +67,26 @@ export default function Search() {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [selectedPokemon, setPokemon] = useState<Pokemon | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
+  const [isPartner, setIsPartner] = useState<boolean>(false);
 
   // Force re-render to fix color scheme detection on initial load
   const [mounted, setMounted] = useState<boolean>(false);
+
+  // Check if the current search result is already the saved partner
+  useEffect(() => {
+    if (selectedPokemon) {
+      AsyncStorage.getItem(STORAGE_KEYS.PARTNER_POKEMON).then((saved) => {
+        if (saved) {
+          const savedPokemon = JSON.parse(saved);
+          setIsPartner(savedPokemon.name === selectedPokemon.name);
+        } else {
+          setIsPartner(false);
+        }
+      });
+    } else {
+      setIsPartner(false);
+    }
+  }, [selectedPokemon]);
 
   const colourScheme = useColorScheme() ?? "light";
   const theme = Colours[colourScheme];
@@ -108,8 +133,10 @@ export default function Search() {
         const jsonData = await unformattedResponse.json();
 
         const mapJsonToPokemon: Pokemon = {
+          pokedex: jsonData.id,
           name: jsonData.name,
           imageFrontLink: jsonData.sprites.front_default,
+          imageFrontShinyLink: jsonData.sprites.front_shiny,
           types: jsonData.types,
         };
 
@@ -136,6 +163,30 @@ export default function Search() {
     setPokemon(null);
     setSelectedName(null);
     setQuery("");
+    setIsPartner(false);
+  };
+
+  const handleTogglePartner = async () => {
+    if (!selectedPokemon) return;
+    if (isPartner) {
+      // Remove as partner
+      await AsyncStorage.removeItem(STORAGE_KEYS.PARTNER_POKEMON);
+      setIsPartner(false);
+    } else {
+      // Save as partner — fields match partnerPokemon's Pokemon shape exactly
+      const partnerData = {
+        pokedex: selectedPokemon.pokedex,
+        name: selectedPokemon.name,
+        imageFrontLink: selectedPokemon.imageFrontLink,
+        imageFrontShinyLink: selectedPokemon.imageFrontShinyLink,
+        types: selectedPokemon.types,
+      };
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.PARTNER_POKEMON,
+        JSON.stringify(partnerData),
+      );
+      setIsPartner(true);
+    }
   };
 
   // Choose a selectionColor that provides better contrast depending on theme.
@@ -388,11 +439,33 @@ export default function Search() {
               ]}
             >
               <View style={styles.pokemonCardContent}>
-                {/* Pokemon Name */}
+                {/* Pokemon Name + Favourite */}
                 <View style={styles.nameSection}>
                   <Text style={[styles.pokemonName, { color: theme.title }]}>
                     {selectedPokemon.name.toLocaleUpperCase()}
                   </Text>
+                  <Pressable
+                    onPress={handleTogglePartner}
+                    style={[
+                      styles.favouriteButton,
+                      {
+                        backgroundColor: isPartner
+                          ? "rgba(255,100,100,0.25)"
+                          : "rgba(255,255,255,0.25)",
+                      },
+                    ]}
+                    accessibilityLabel={
+                      isPartner
+                        ? "Remove partner Pokémon"
+                        : "Set as partner Pokémon"
+                    }
+                  >
+                    <Ionicons
+                      name={isPartner ? "heart" : "heart-outline"}
+                      size={20}
+                      color={isPartner ? "#ff4444" : theme.title}
+                    />
+                  </Pressable>
                 </View>
 
                 {/* Types */}
@@ -417,18 +490,6 @@ export default function Search() {
                   source={{ uri: selectedPokemon.imageFrontLink }}
                   style={styles.pokemonImage}
                 />
-              </View>
-
-              {/* Tap Indicator */}
-              <View style={styles.tapIndicator}>
-                <Ionicons
-                  name="document-text-outline"
-                  size={16}
-                  color={theme.title}
-                />
-                <Text style={[styles.tapText, { color: theme.title }]}>
-                  More
-                </Text>
               </View>
             </Link>
           </ScrollView>
@@ -581,12 +642,20 @@ const styles = StyleSheet.create({
 
   pokemonCardContent: {
     gap: 12,
+    width: "100%",
   },
 
   nameSection: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+  },
+
+  favouriteButton: {
+    padding: 8,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   pokemonName: {
@@ -616,20 +685,5 @@ const styles = StyleSheet.create({
     height: 160,
     alignSelf: "center",
     marginVertical: 8,
-  },
-
-  tapIndicator: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: "rgba(255,255,255,0.3)",
-  },
-
-  tapText: {
-    fontSize: 12,
-    fontWeight: "500",
   },
 });
