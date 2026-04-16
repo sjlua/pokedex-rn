@@ -31,6 +31,7 @@ interface Pokemon {
   imageFrontLink: string;
   imageFrontShinyLink: string | null;
   types: PokemonTypeObject[];
+  speciesName: string;
 }
 
 interface PokemonTypeObject {
@@ -137,6 +138,7 @@ export default function Search() {
           imageFrontLink: jsonData.sprites.front_default,
           imageFrontShinyLink: jsonData.sprites.front_shiny,
           types: jsonData.types,
+          speciesName: jsonData.species.name,
         };
 
         setPokemon(mapJsonToPokemon);
@@ -453,7 +455,7 @@ export default function Search() {
                 {/* Pokemon Name + Favourite */}
                 <View style={styles.nameSection}>
                   <Text style={[styles.pokemonName, { color: theme.title }]}>
-                    {selectedPokemon.name.toLocaleUpperCase()}
+                    {selectedPokemon.speciesName.toLocaleUpperCase()}
                   </Text>
                   <Pressable
                     onPress={handleTogglePartner}

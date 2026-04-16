@@ -130,7 +130,7 @@ export default function Collection() {
 
   // When called, add 2 more pages worth of Pokemon
   const loadMorePokemon = async () => {
-    setCurrentPage(currentPage + 18);
+    setCurrentPage(currentPage + 9);
   };
 
   const showRegionPicker = async () => {
