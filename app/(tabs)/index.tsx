@@ -21,6 +21,7 @@ interface Pokemon {
   imageFrontLink: string;
   imageBackLink: string;
   types: PokemonTypeObject[];
+  speciesName: string;
 }
 
 interface PokemonTypeObject {
@@ -109,6 +110,7 @@ export default function Collection() {
             imageFrontLink: stats.sprites.front_default, // main front sprite
             imageBackLink: stats.sprites.back_default, // main front sprite
             types: stats.types,
+            speciesName: stats.species.name,
           };
         }),
       );
@@ -249,10 +251,10 @@ export default function Collection() {
             <View style={styles.cardContent}>
               {/* Name */}
               <Text
-                key={item.name}
+                key={item.speciesName}
                 style={[styles.name, { color: theme.title }]}
               >
-                {item.name.toUpperCase()}
+                {item.speciesName.toUpperCase()}
               </Text>
 
               {/* Types */}
